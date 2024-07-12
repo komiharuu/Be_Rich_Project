@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,6 +12,7 @@ import {
 import { Invitation } from './invitation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Member } from './member.entity';
+import { List } from 'src/lists/entities/list.entity';
 
 @Index('boardTitle', ['title'], { unique: true })
 @Entity({ name: 'boards' })
@@ -17,9 +20,9 @@ export class Board {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  //   @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
-  //   @JoinColumn({name : 'owner_id'})
-  //   user: User;
+  @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'owner_id' })
+  user: User;
 
   @OneToMany(() => Member, (members) => members.board)
   members: Member[];
@@ -44,5 +47,7 @@ export class Board {
 
   @UpdateDateColumn()
   updatedAt: Date;
-    user: any;
+
+  @OneToMany(() => List, (list) => list.board)
+  list: List;
 }
