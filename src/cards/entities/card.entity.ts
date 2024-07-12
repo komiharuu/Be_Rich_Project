@@ -1,3 +1,5 @@
+import { List } from 'src/lists/entities/list.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -60,6 +62,5 @@ export class Card {
   @ManyToOne((type): typeof List => List, (list): Card[] => list.cards, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn
   list: List;
 }
