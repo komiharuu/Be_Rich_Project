@@ -28,6 +28,9 @@ export class Card {
   @Column({ type: 'varchar' })
   color: string;
 
+  @Column({ type: 'varchar', unique: true })
+  position: string;
+
   @Column({ type: 'varchar' })
   assignment: string;
 
@@ -39,6 +42,9 @@ export class Card {
 
   @Column({ type: 'datetime' })
   duedate: Date;
+
+  @Column({ type: 'datetime', default: false })
+  is_deleted: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
