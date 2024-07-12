@@ -4,11 +4,9 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Member } from './member.entity';
 import { Board } from './board.entity';
 import { Status } from '../types/invitation-status.type';
 
@@ -18,14 +16,10 @@ export class Invitation {
   id: number;
 
   @ManyToOne(() => Board, (board) => board.invitations, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'board_id' })
   board: Board;
 
-  @OneToOne(() => Member)
-  @JoinColumn()
-  member: Member;
-
-  @Column()
+  @Column({ unique: true })
   memberEmail: string;
 
   @Column({ type: 'enum', enum: Status, default: Status.Pending })
