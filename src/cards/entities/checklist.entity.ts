@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -35,5 +36,6 @@ export class Checklist {
   @ManyToOne((type): typeof Card => Card, (card): Checklist[] => card.checklists, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   card: Card;
 }

@@ -28,10 +28,12 @@ export class Card {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: '#FFFFFF' })
   color: string;
+  // nullable을 한 이유: 카드를 생성할 때 색상을 고를 수 있는 옵션이 없고
+  // 대신 수정 시에 색상을 변경할 수 있더라고요
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
   position: string;
 
   // 작업자 할당
@@ -60,11 +62,13 @@ export class Card {
   @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   user: User;
 
   @ManyToOne((type): typeof List => List, (list): Card[] => list.cards, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   list: List;
 
   @OneToMany((type): typeof Checklist => Checklist, (checklists) => checklists.card, {
