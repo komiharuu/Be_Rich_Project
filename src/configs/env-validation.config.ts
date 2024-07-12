@@ -8,6 +8,5 @@ export const configModuleValidationSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_NAME: Joi.string().required(),
   DB_SYNC: Joi.boolean().required(),
+  JWT_SECRET_KEY: Joi.string().required(),
 });
-
-//  DB 정보 등록 안해서 읽을수없다고 뜰겁니다

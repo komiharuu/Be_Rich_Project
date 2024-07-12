@@ -27,6 +27,7 @@ export class Member {
   board: Board;
 
   @OneToOne(() => Invitation)
+  @JoinColumn({ name: 'invitation_id' })
   invitation: Invitation;
 
   @Column({ type: 'enum', enum: Role })

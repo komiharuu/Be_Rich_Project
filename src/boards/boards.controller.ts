@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
@@ -7,19 +17,21 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
+  //가드 추가 필요
+  @HttpCode(HttpStatus.CREATED)
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto) {
-    return this.boardsService.create(createBoardDto);
+  async create(@Body() createBoardDto: CreateBoardDto) {
+    return await this.boardsService.createBoard(createBoardDto);
   }
 
   @Get()
-  findAll() {
-    return this.boardsService.findAll();
+  getAll() {
+    return this.boardsService.getAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(+id);
+  getOne(@Param('id') id: string) {
+    return this.boardsService.getOne(+id);
   }
 
   @Patch(':id')
@@ -28,7 +40,7 @@ export class BoardsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardsService.remove(+id);
+  delete(@Param('id') id: string) {
+    return this.boardsService.delete(+id);
   }
 }
