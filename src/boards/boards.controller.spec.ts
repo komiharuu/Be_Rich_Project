@@ -238,7 +238,7 @@ describe('BoardsController', () => {
     it('should accept invitation', async () => {
       //GIVEN
       const acceptInvitationResult = {
-        message: '성공적으로 보드에 가입되었습니다.'
+        message: '성공적으로 보드에 가입되었습니다.',
       };
 
       //WHEN
