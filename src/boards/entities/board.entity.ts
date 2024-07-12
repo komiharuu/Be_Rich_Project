@@ -1,4 +1,3 @@
-import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Invitation } from './invitation.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Index('boardTitle', ['title'], { unique: true })
 @Entity({ name: 'boards' })
