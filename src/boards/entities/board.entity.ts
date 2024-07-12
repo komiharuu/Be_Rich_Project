@@ -5,9 +5,11 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Invitation } from './invitation.entity';
 
 @Index('boardTitle', ['title'], { unique: true })
 @Entity({ name: 'boards' })
@@ -17,6 +19,9 @@ export class Board {
 
   //   @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
   //   owner: User;
+
+  @OneToMany(() => Invitation, (invitations) => invitations.board)
+  invitations: Invitation;
 
   @Column()
   title: string;
