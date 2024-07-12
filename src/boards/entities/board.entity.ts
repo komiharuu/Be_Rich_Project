@@ -40,4 +40,5 @@ export class Board {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
 }

@@ -31,4 +31,9 @@ export class List {
 //   })
 //   user: User;
 
+// @ManyToOne(()=> Board, board => board.lists,{
+//     onDelete:'CASCADE',
+// })
+// board:Board;
+
 }
