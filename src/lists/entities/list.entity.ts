@@ -1,6 +1,6 @@
-import { Board } from 'src/boards/entities/board.entity';
-import { Card } from 'src/cards/entities/card.entity';
-import { User } from 'src/users/entities/user.entity';
+// import { Board } from 'src/boards/entities/board.entity';
+// import { Card } from 'src/cards/entities/card.entity';
+// import { User } from 'src/users/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
@@ -23,7 +23,7 @@ export class List {
   @UpdateDateColumn()
   updated_at: Date;
   
-  cards: Card[];
+//   cards: Card[];
 
 
 //   @ManyToOne(() => User, user => user.lists, {
