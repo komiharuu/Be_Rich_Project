@@ -22,7 +22,8 @@ export class Checklist {
   title: string;
 
   @Column({ type: 'varchar' })
-  item: string;
+  item: string[];
+  //체크리스트 내용을 트렐로에서는 item이라고 함.
 
   @Column({ type: 'boolean', default: false })
   is_completed: boolean;
