@@ -5,4 +5,5 @@ export class User {
   cards: Card[];
     list: List[];
     lists: any;
+  comments: Card[];
 }

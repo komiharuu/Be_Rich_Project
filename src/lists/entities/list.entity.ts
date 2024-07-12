@@ -1,3 +1,4 @@
+import { Board } from 'src/boards/entities/board.entity';
 import { Card } from 'src/cards/entities/card.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
@@ -21,10 +22,13 @@ export class List {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  @ManyToOne(() => User, user => user.lists, {
-    onDelete: 'CASCADE',
-  })
-  user: User;
+  
   cards: Card[];
+
+
+//   @ManyToOne(() => User, user => user.lists, {
+//     onDelete: 'CASCADE',
+//   })
+//   user: User;
+
 }
