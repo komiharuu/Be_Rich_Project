@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Member } from './member.entity';
 import { Board } from './board.entity';
 import { Status } from '../types/invitation-status.type';
 
@@ -20,7 +19,7 @@ export class Invitation {
   @JoinColumn({ name: 'board_id' })
   board: Board;
 
-  @Column()
+  @Column({ unique: true })
   memberEmail: string;
 
   @Column({ type: 'enum', enum: Status, default: Status.Pending })
