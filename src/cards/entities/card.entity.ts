@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Checklist } from './checklist.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { List } from 'src/lists/entities/list.entity';
 
 @Entity('cards')
 export class Card {
