@@ -1,7 +1,15 @@
 import { Board } from 'src/boards/entities/board.entity';
 import { Card } from 'src/cards/entities/card.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class List {
@@ -22,19 +30,17 @@ export class List {
 
   @UpdateDateColumn()
   updated_at: Date;
-  
-  @OneToMany(() => Card, card => card.list)
+
+  @OneToMany(() => Card, (card) => card.list)
   cards: Card[];
 
+  @ManyToOne(() => User, (user) => user.list, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
 
-//   @ManyToOne(() => User, user => user.list, {
-//     onDelete: 'CASCADE',
-//   })
-//   user: User;
-
-//  @ManyToOne(()=> Board, board => board.list,{
-//     onDelete:'CASCADE',
-// })
-board:Board;
-
+  @ManyToOne(() => Board, (board) => board.list, {
+    onDelete: 'CASCADE',
+  })
+  board: Board;
 }
