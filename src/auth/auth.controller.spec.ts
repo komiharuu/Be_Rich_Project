@@ -101,7 +101,7 @@ describe('AuthController', () => {
   });
 
   describe('signIn', () => {
-    it('should sign in', async () => {
+    it('should return tokens', async () => {
       // GIVEN
       const signInResult = {
         accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
@@ -113,15 +113,15 @@ describe('AuthController', () => {
       mockAuthService.signIn.mockResolvedValue(signInResult);
 
       // THEN
-      const responese = await controller.signIn(signInDto);
+      const response = await controller.signIn(signInDto);
       // 컨트롤러의 실제 signIp 메서드의 결과에 accessToken이 있는지 확인
-      expect(responese).toHaveProperty('accessToken');
+      expect(response).toHaveProperty('accessToken');
       // 컨트롤러의 실제 signIp 메서드의 결과에 accessToken이 있는지 확인
-      expect(responese).toHaveProperty('refreshToken');
+      expect(response).toHaveProperty('refreshToken');
       // 컨트롤러의 실제 signIp 메서드의 accessToken이 문자열인지 확인
-      expect(typeof responese.accessToken).toBe('string');
+      expect(typeof response.accessToken).toBe('string');
       // 컨트롤러의 실제 signIp 메서드의 refreshToken이 문자열인지 확인
-      expect(typeof responese.refreshToken).toBe('string');
+      expect(typeof response.refreshToken).toBe('string');
       // 컨트롤러에서 서비스의 sinUp 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockAuthService.signUp).toHaveBeenCalledWith(
         signUpDto.email,
