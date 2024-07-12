@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -18,9 +19,11 @@ export class Member {
   id: number;
 
   @ManyToOne(() => User)
+  @JoinColumn()
   user: User;
 
   @ManyToOne(() => Board, { onDelete: 'CASCADE' })
+  @JoinColumn()
   board: Board;
 
   @OneToOne(() => Invitation)
