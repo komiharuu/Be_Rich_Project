@@ -46,19 +46,19 @@ export class BoardsService {
     };
   }
 
-  getAll() {
+  getBoardList() {
     return `This action returns all boards`;
   }
 
-  getOne(id: number) {
+  getBoardDetail(id: number) {
     return `This action returns a #${id} board`;
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
+  updateBoard(id: number, updateBoardDto: UpdateBoardDto) {
     return `This action updates a #${id} board`;
   }
 
-  delete(id: number) {
+  deleteBoard(id: number) {
     return `This action removes a #${id} board`;
   }
 }

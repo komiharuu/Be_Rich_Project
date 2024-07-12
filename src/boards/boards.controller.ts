@@ -27,22 +27,22 @@ export class BoardsController {
   }
 
   @Get()
-  getAll() {
-    return this.boardsService.getAll();
+  getBoardList() {
+    return this.boardsService.getBoardList();
   }
 
-  @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.boardsService.getOne(+id);
+  @Get(':boardId')
+  getBoardDetail(@Param('boardId') id: string) {
+    return this.boardsService.getBoardDetail(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.update(+id, updateBoardDto);
+  @Patch(':boardId')
+  updateBoard(@Param('boardId') id: string, @Body() updateBoardDto: UpdateBoardDto) {
+    return this.boardsService.updateBoard(+id, updateBoardDto);
   }
 
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.boardsService.delete(+id);
+  @Delete(':boardId')
+  deleteBoard(@Param('boardId') id: string) {
+    return this.boardsService.deleteBoard(+id);
   }
 }

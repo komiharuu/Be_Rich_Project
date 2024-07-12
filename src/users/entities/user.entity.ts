@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Board } from 'src/boards/entities/board.entity';
+import { Member } from 'src/boards/entities/member.entity';
 
 @Entity('users')
 export class User {
@@ -28,4 +30,10 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
+
+  @OneToMany(() => Board, (board) => board.user)
+  boards!: Board[];
+
+  @OneToMany(() => Member, (member) => member.user)
+  members!: Member[];
 }
