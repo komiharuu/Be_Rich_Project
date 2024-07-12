@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -34,10 +35,12 @@ export class Comment {
   @ManyToOne((type): typeof User => User, (user): Card[] => user.comments, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   user: User;
 
   @ManyToOne((type): typeof Card => Card, (card): Comment[] => card.comments, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   card: Card;
 }
