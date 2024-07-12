@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,9 +18,11 @@ export class Invitation {
   id: number;
 
   @ManyToOne(() => Board, (board) => board.invitations, { onDelete: 'CASCADE' })
+  @JoinColumn()
   board: Board;
 
   @OneToOne(() => Member)
+  @JoinColumn()
   member: Member;
 
   @Column()
