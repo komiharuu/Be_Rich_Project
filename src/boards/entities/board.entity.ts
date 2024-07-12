@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Invitation } from './invitation.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Member } from './member.entity';
 
 @Index('boardTitle', ['title'], { unique: true })
 @Entity({ name: 'boards' })
@@ -20,8 +21,11 @@ export class Board {
   //   @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
   //   owner: User;
 
+  @OneToMany(() => Member, (members) => members.board)
+  members: Member[];
+
   @OneToMany(() => Invitation, (invitations) => invitations.board)
-  invitations: Invitation;
+  invitations: Invitation[];
 
   @Column()
   title: string;

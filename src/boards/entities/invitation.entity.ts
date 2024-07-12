@@ -18,12 +18,8 @@ export class Invitation {
   id: number;
 
   @ManyToOne(() => Board, (board) => board.invitations, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @JoinColumn({ name: 'board_id' })
   board: Board;
-
-  @OneToOne(() => Member)
-  @JoinColumn()
-  member: Member;
 
   @Column()
   memberEmail: string;
