@@ -38,4 +38,5 @@ export class Member {
 
   @UpdateDateColumn()
   updatedAt: Date;
+    user: any;
 }

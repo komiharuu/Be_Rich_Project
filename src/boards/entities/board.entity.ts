@@ -44,4 +44,5 @@ export class Board {
 
   @UpdateDateColumn()
   updatedAt: Date;
+    user: any;
 }
