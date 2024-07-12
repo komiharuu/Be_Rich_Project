@@ -1,4 +1,3 @@
-import { Comment } from 'src/comments/entities/comment.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Checklist } from './checklist.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 
 @Entity('cards')
 export class Card {
@@ -30,24 +30,23 @@ export class Card {
 
   @Column({ type: 'varchar', default: '#FFFFFF' })
   color: string;
-  // nullable을 한 이유: 카드를 생성할 때 색상을 고를 수 있는 옵션이 없고
-  // 대신 수정 시에 색상을 변경할 수 있더라고요
 
-  @Column({ type: 'varchar' })
-  position: string;
+  @Column({ unsigned: true })
+  position: number;
 
-  // 작업자 할당
-  @Column({ type: 'varchar' })
-  assignment: string;
+  // 할당한 사람의 Id- 따로설정한 이유: 카드 제작자랑 할당자랑 다를 수 있기 때문
+  @Column({ unsigned: true })
+  assignment_id: number;
 
-  // 작업자 변경
-  @Column({ type: 'varchar' })
-  change: string;
+  // 할당받은 사람의 id, 할당받은 사람이 없을 수도 있으니 nullable을 설정해놓았습니다.
+  @Column({ unsigned: true, nullable: true })
+  collaborator_id: number[];
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   startdate: Date;
+  // 사유: 트렐로 홈페이지는  시작일 설정이 의무가 아니기 때문에 nullable을 설정함.
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   duedate: Date;
 
   @Column({ type: 'boolean', default: false })
