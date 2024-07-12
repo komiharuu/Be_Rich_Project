@@ -8,11 +8,11 @@ export class BoardsService {
     return 'This action adds a new board';
   }
 
-  findAll() {
+  getAll() {
     return `This action returns all boards`;
   }
 
-  findOne(id: number) {
+  getOne(id: number) {
     return `This action returns a #${id} board`;
   }
 
@@ -20,7 +20,7 @@ export class BoardsService {
     return `This action updates a #${id} board`;
   }
 
-  remove(id: number) {
+  delete(id: number) {
     return `This action removes a #${id} board`;
   }
 }

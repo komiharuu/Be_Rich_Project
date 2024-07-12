@@ -18,7 +18,8 @@ export class Board {
   id: number;
 
   //   @ManyToOne(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
-  //   owner: User;
+  //   @JoinColumn({name : 'owner_id'})
+  //   user: User;
 
   @OneToMany(() => Member, (members) => members.board)
   members: Member[];

@@ -14,12 +14,12 @@ export class BoardsController {
 
   @Get()
   findAll() {
-    return this.boardsService.findAll();
+    return this.boardsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(+id);
+    return this.boardsService.getOne(+id);
   }
 
   @Patch(':id')
@@ -29,6 +29,6 @@ export class BoardsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.boardsService.remove(+id);
+    return this.boardsService.delete(+id);
   }
 }
