@@ -5,35 +5,35 @@ import { Member } from 'src/boards/entities/member.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column({ unique: true })
-  email!: string;
+  email: string;
 
   @Column()
-  nickname!: string;
+  nickname: string;
 
   @Column()
-  password!: string;
+  password: string;
 
   @Column({ name: 'profile_img', nullable: true })
-  profileImg!: string;
+  profileImg: string;
 
   @Column({ name: 'refresh_token', nullable: true })
-  refreshToken!: string;
+  refreshToken: string;
 
   @Column({ name: 'is_deleted', default: false })
-  isDeleted!: boolean;
+  isDeleted: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt!: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
+  updatedAt: Date;
 
   @OneToMany(() => Board, (board) => board.user)
-  boards!: Board[];
+  boards: Board[];
 
   @OneToMany(() => Member, (member) => member.user)
-  members!: Member[];
+  members: Member[];
 }

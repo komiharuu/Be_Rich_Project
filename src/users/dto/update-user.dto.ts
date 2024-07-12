@@ -3,5 +3,5 @@ import { CreateUserDto } from './create-user.dto';
 
 export class UpdateUserDto {
     nickname: string | undefined;
-    profileImg?: string;
+    profileImg: string;
   }
