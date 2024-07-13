@@ -37,6 +37,7 @@ describe('ListsController', () => {
     }).compile();
 
     controller = module.get<ListsController>(ListsController);
+    service = module.get<ListsService>(ListsService);
   });
 
   // 테스트 후에 임시 데이터 초기화
