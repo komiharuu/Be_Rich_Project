@@ -91,12 +91,7 @@ describe('AuthController', () => {
       // 컨트롤러의 실제 signUp 메서드의 결과가 signUpResult와 같은지 확인
       expect(await controller.signUp(signUpDto)).toBe(signUpResult);
       // 컨트롤러에서 서비스의 sinUp 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockAuthService.signUp).toHaveBeenCalledWith(
-        signUpDto.email,
-        signUpDto.password,
-        signUpDto.passwordCheck,
-        signUpDto.nickname
-      );
+      expect(mockAuthService.signUp).toHaveBeenCalledWith(signUpDto);
     });
   });
 
