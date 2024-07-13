@@ -141,7 +141,7 @@ describe('BoardsController', () => {
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
-      const req = { params: { boardId: 1 } };
+      const req = { params: { boardId: '1' } };
 
       //WHEN
       // 모킹된 서비스의 getBoardDetail 메서드를 실행하면 getBoardDetailResult 값을 반환한다는 의미
@@ -149,12 +149,10 @@ describe('BoardsController', () => {
 
       //THEN
       const response = await controller.getBoardDetail(req.params.boardId);
-      // getBoardDetail 메서드가 오류 없이 1번만 반환되었는지 확인
-      expect(response).toHaveReturnedTimes(1);
       // 컨트롤러의 실제 getBoardDetail 메서드의 결과가 getBoardDetailResult와 같은지 확인
-      // expect(response).toBe(getBoardDetailResult);
+      expect(response).toBe(getBoardDetailResult);
       // 컨트롤러에서 서비스의 getBoardDetail 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockBoardsService.getBoardDetail).toHaveBeenCalledWith(req.params.boardId);
+      expect(mockBoardsService.getBoardDetail).toHaveBeenCalledWith(+req.params.boardId);
     });
   });
 
@@ -165,7 +163,7 @@ describe('BoardsController', () => {
         status: 201,
         message: '보드 수정에 성공했습니다.',
       };
-      const req = { params: { boardId: 1 } };
+      const req = { params: { boardId: '1' } };
 
       //WHEN
       // 모킹된 서비스의 updateBoard 메서드를 실행하면 updateBoardResult 값을 반환한다는 의미
@@ -173,13 +171,11 @@ describe('BoardsController', () => {
 
       //THEN
       const response = await controller.updateBoard(req.params.boardId, updateBoardDto);
-      // updateBoard 메서드가 오류 없이 1번만 반환되었는지 확인
-      expect(response).toHaveReturnedTimes(1);
       // 컨트롤러의 실제 updateBoard 메서드의 결과가 updateBoardResult 같은지 확인
       expect(response).toBe(updateBoardResult);
       // 컨트롤러에서 서비스의 updateBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.updateBoard).toHaveBeenCalledWith(
-        req.params.boardId,
+        +req.params.boardId,
         updateBoardDto
       );
     });
@@ -192,7 +188,7 @@ describe('BoardsController', () => {
         status: 201,
         message: '보드 삭제에 성공했습니다.',
       };
-      const req = { params: { boardId: 1 } };
+      const req = { params: { boardId: '1' } };
 
       //WHEN
       // 모킹된 서비스의 deleteBoard 메서드를 실행하면 deleteBoardResult 값을 반환한다는 의미
@@ -200,12 +196,10 @@ describe('BoardsController', () => {
 
       //THEN
       const response = await controller.deleteBoard(req.params.boardId);
-      // deleteBoard 메서드가 오류 없이 1번만 반환되었는지 확인
-      expect(response).toHaveReturnedTimes(1);
       // 컨트롤러의 실제 deleteBoard 메서드의 결과가 deleteBoardResult 같은지 확인
       expect(response).toBe(deleteBoardResult);
       // 컨트롤러에서 서비스의 deleteBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockBoardsService.deleteBoard).toHaveBeenCalledWith(req.params.boardId);
+      expect(mockBoardsService.deleteBoard).toHaveBeenCalledWith(+req.params.boardId);
     });
   });
 
@@ -223,14 +217,12 @@ describe('BoardsController', () => {
 
       //THEN
       const response = await controller.createInvitation(createInvitationDto);
-      // createInvitation 메서드가 오류 없이 1번만 반환되었는지 확인
-      expect(response).toHaveReturnedTimes(1);
       // 컨트롤러의 실제 createInvitation 메서드의 결과에 token이 있는지 확인
       expect(response).toHaveProperty('token');
       // 컨트롤러의 실제 createInvitation 메서드의 token이 문자열인지 확인
       expect(typeof response.token).toBe('string');
       // 컨트롤러의 실제 createInvitation 메서드의 결과가 createInvitationResult 같은지 확인
-      // expect(response).toBe(createInvitationResult);
+      expect(response).toBe(createInvitationResult);
       // 컨트롤러에서 서비스의 createInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.createInvitation).toHaveBeenCalledWith(createInvitationDto);
     });
