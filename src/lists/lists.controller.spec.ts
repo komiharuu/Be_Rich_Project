@@ -108,7 +108,7 @@ describe('ListsController', () => {
         status: 201,
         message: '리스트 수정에 성고했습니다.',
       };
-      const req = { params: { listId: '1' } };
+      const req = { params: { listId: 1 } };
 
       // WHEN
       mockListsService.updateList.mockResolvedValue(updateListResult);
@@ -117,7 +117,7 @@ describe('ListsController', () => {
       const response = await controller.updateList(req.params.listId, updateListDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateListResult);
-      expect(mockListsService.updateList).toHaveBeenCalledWith(+req.params.listId);
+      expect(mockListsService.updateList).toHaveBeenCalledWith(req.params.listId);
     });
   });
 
@@ -128,7 +128,7 @@ describe('ListsController', () => {
         status: 201,
         message: '리스트 삭제에 성공했습니다.',
       };
-      const req = { params: { listId: '1' } };
+      const req = { params: { listId: 1 } };
 
       // WHEN
       mockListsService.deleteList.mockResolvedValue(deleteListResult);
@@ -137,7 +137,7 @@ describe('ListsController', () => {
       const response = await controller.deleteList(req.params.listId);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteListResult);
-      expect(mockListsService.deleteList).toHaveBeenCalledWith(+req.params.listId);
+      expect(mockListsService.deleteList).toHaveBeenCalledWith(req.params.listId);
     });
   });
 });
