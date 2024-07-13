@@ -89,14 +89,12 @@ describe('AuthController', () => {
 
       // THEN
       // 컨트롤러의 실제 signUp 메서드의 결과가 signUpResult와 같은지 확인
-      // expect(await controller.signUp(signUpDto)).toBe(signUpResult);
-      // 정확한 결과값을 toBe()로 비교하는게 아니라 프로퍼티의 유무로 테스트
       const response = await controller.signUp(signUpDto);
-      expect(response).not.toBe(undefined);
-      expect(response).toBeInstanceOf(Object);
+      expect(response).toHaveBeenCalledTimes(1);
       expect(response).toHaveProperty('email');
       expect(response).toHaveProperty('nickname');
       expect(response).toHaveProperty('profileImg');
+      expect(response).toBe(signUpResult);
       // 컨트롤러에서 서비스의 sinUp 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockAuthService.signUp).toHaveBeenCalledWith(signUpDto);
     });
@@ -109,6 +107,7 @@ describe('AuthController', () => {
         accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
       };
+      const req = { user: { id: 1 } };
 
       // WHEN
       // 모킹된 서비스의 signIn메서드를 실행하면 signInResult 값을 반환한다는 의미
@@ -116,6 +115,7 @@ describe('AuthController', () => {
 
       // THEN
       const response = await controller.signIn(signInDto);
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
       expect(response).toHaveProperty('accessToken');
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
@@ -124,6 +124,7 @@ describe('AuthController', () => {
       expect(typeof response.accessToken).toBe('string');
       // 컨트롤러의 실제 signIn 메서드의 refreshToken이 문자열인지 확인
       expect(typeof response.refreshToken).toBe('string');
+      expect(response).toBe(signInResult);
       // 컨트롤러에서 서비스의 signIn 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockAuthService.signIn).toHaveBeenCalledWith(signInDto);
     });
