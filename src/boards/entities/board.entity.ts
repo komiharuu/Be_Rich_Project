@@ -30,24 +30,12 @@ export class Board {
   @OneToMany(() => Invitation, (invitations) => invitations.board)
   invitations: Invitation[];
 
-  /**
-   * 제목
-   * @example "To Do"
-   */
   @Column()
   title: string;
 
-  /**
-   * 설명
-   * @example "해야할 업무"
-   */
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  /**
-   * 배경 색상
-   * @example "#0000FF"
-   */
   @Column({ default: '#ffffff' })
   backgroundColor: string;
 

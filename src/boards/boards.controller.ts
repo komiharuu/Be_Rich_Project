@@ -22,6 +22,9 @@ import { AuthGuard } from '@nestjs/passport';
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
+  /**
+   * 보드 생성
+   * */
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   @Post()
@@ -30,24 +33,36 @@ export class BoardsController {
     return await this.boardsService.createBoard(createBoardDto, userId);
   }
 
+  /**
+   * 보드 목록 조회
+   */
   @HttpCode(HttpStatus.OK)
   @Get()
   getBoardList() {
     return this.boardsService.getBoardList();
   }
 
+  /**
+   * 보드 상세 조회
+   */
   @HttpCode(HttpStatus.OK)
   @Get(':boardId')
   getBoardDetail(@Param('boardId') id: number) {
     return this.boardsService.getBoardDetail(+id);
   }
 
+  /**
+   * 보드 수정
+   */
   @HttpCode(HttpStatus.OK)
   @Patch(':boardId')
   updateBoard(@Param('boardId') id: number, @Body() updateBoardDto: UpdateBoardDto) {
     return this.boardsService.updateBoard(+id, updateBoardDto);
   }
 
+  /**
+   * 보드 삭제
+   */
   @HttpCode(HttpStatus.OK)
   @Delete(':boardId')
   deleteBoard(@Param('boardId') id: number) {
