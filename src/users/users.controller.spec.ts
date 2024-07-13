@@ -59,17 +59,19 @@ describe('UsersController', () => {
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
+      const req = { user: { id: 1 } };
 
       // WHEN
       mockUsersService.getUserInfo.mockResolvedValue(getUserInfoResult);
 
       // THEN
-      const response = await controller.getUserInfo();
-      expect(response).not.toBe(undefined);
-      expect(response).toBeInstanceOf(Object);
+      const response = await controller.getUserInfo(req);
+      expect(response).toHaveBeenCalledTimes(1);
       expect(response).toHaveProperty('email');
       expect(response).toHaveProperty('nickname');
       expect(response).toHaveProperty('profileImg');
+      expect(response).toBe(getUserInfoResult);
+      expect(mockUsersService.getUserInfo).toHaveBeenCalledWith(req.user.id);
     });
   });
 
@@ -86,9 +88,10 @@ describe('UsersController', () => {
       mockUsersService.updateUser.mockResolvedValue(updateUserResult);
 
       // THEN
-      const response = await controller.updateUser(req.user.id, updateUserDto);
+      const response = await controller.updateUser(req, updateUserDto);
+      expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateUserResult);
-      expect(response).toHaveBeenCalledWith(updateUserDto);
+      expect(mockUsersService.updateUser).toHaveBeenCalledWith(req.user.id, updateUserDto);
     });
   });
 
@@ -105,9 +108,10 @@ describe('UsersController', () => {
       mockUsersService.deleteUser.mockResolvedValue(deleteUserResult);
 
       // THEN
-      const response = await controller.deleteUser(req.user.id);
+      const response = await controller.deleteUser(req);
+      expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteUserResult);
-      expect(response).toHaveBeenCalledWith(req.user.id);
+      expect(mockUsersService.deleteUser).toHaveBeenCalledWith(req.user.id);
     });
   });
 });
