@@ -162,6 +162,7 @@ describe('BoardsController', () => {
     it('should update board', async () => {
       //GIVEN
       const updateBoardResult = {
+        status: 201,
         message: '보드 수정에 성공했습니다.',
       };
       const req = { params: { boardId: 1 } };
@@ -188,6 +189,7 @@ describe('BoardsController', () => {
     it('should delete board', async () => {
       //GIVEN
       const deleteBoardResult = {
+        status: 201,
         message: '보드 삭제에 성공했습니다.',
       };
       const req = { params: { boardId: 1 } };
@@ -238,6 +240,7 @@ describe('BoardsController', () => {
     it('should accept invitation', async () => {
       //GIVEN
       const acceptInvitationResult = {
+        status: 201,
         message: '성공적으로 보드에 가입되었습니다.',
       };
 
