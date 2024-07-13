@@ -67,7 +67,7 @@ export class BoardsService {
   }
 
   /* 보드 목록 조회 */
-  async getBoardList() {
+  async getBoardList(user: User) {
     //캐싱 된 데이터 찾기
     const cachedBoards = await this.cacheManager.get<Board[]>('boards');
     //캐싱 된 데이터가 있다면, 데이터 가져오기
@@ -88,10 +88,12 @@ export class BoardsService {
 
     //데이터베이스에서 데이터 찾기
     const boards = await this.boardRepository.find({
+      where: [user],
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });
 
+    //조회된 데이터 캐시에 저장
     await this.cacheManager.set('boards', boards);
 
     const boardList = boards.map((board) => ({
@@ -109,8 +111,8 @@ export class BoardsService {
   }
 
   /* 보드 상세 조회 */
-  async getBoardDetail(id: number) {
-    const board = await this.boardRepository.findOne({ where: { id } });
+  async getBoardDetail(id: number, user: User) {
+    const board = await this.boardRepository.findOne({ where: { id, user } });
 
     if (!board) {
       throw new NotFoundException('존재하지 않는 보드입니다.');
@@ -131,16 +133,17 @@ export class BoardsService {
     };
   }
 
-  async updateBoard(id: number, updateBoardDto: UpdateBoardDto) {
+  async updateBoard(id: number, updateBoardDto: UpdateBoardDto, user: User) {
     const { title, description, backgroundColor } = updateBoardDto;
 
     //보드 존재 여부 확인
-    const board = await this.boardRepository.findOne({ where: { id } });
+    const board = await this.boardRepository.findOne({ where: { id, user } });
 
     if (!board) {
       throw new NotFoundException('존재하지 않는 보드입니다.');
     }
 
+    //보드 업데이트
     if (title) {
       board.title = title;
     }
@@ -152,6 +155,7 @@ export class BoardsService {
       board.backgroundColor = backgroundColor;
     }
 
+    //변경 사항 저장
     await this.boardRepository.save(board);
 
     return {
@@ -160,7 +164,19 @@ export class BoardsService {
     };
   }
 
-  deleteBoard(id: number) {
-    return `This action removes a #${id} board`;
+  async deleteBoard(id: number, user: User) {
+    //보드 존재 여부 확인
+    const board = await this.boardRepository.findOne({ where: { id, user } });
+
+    //isDeleted값 엡데이트
+    board.isDeleted = true;
+
+    //보드 삭제
+    await this.boardRepository.delete(board);
+
+    return {
+      status: HttpStatus.OK,
+      message: '보드 삭제에 성공했습니다.',
+    };
   }
 }
