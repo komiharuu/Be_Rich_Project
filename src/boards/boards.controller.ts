@@ -22,7 +22,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   @Post()
   async createBoard(@Body() createBoardDto: CreateBoardDto, @Req() req) {
@@ -37,20 +37,20 @@ export class BoardsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get(':boardid')
-  getBoardDetail(@Param('boardId') id: string) {
+  @Get(':boardId')
+  getBoardDetail(@Param('boardId') id: number) {
     return this.boardsService.getBoardDetail(+id);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Patch(':boardid')
-  updateBoard(@Param('boardId') id: string, @Body() updateBoardDto: UpdateBoardDto) {
+  @Patch(':boardId')
+  updateBoard(@Param('boardId') id: number, @Body() updateBoardDto: UpdateBoardDto) {
     return this.boardsService.updateBoard(+id, updateBoardDto);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Delete(':boardid')
-  deleteBoard(@Param('boardId') id: string) {
+  @Delete(':boardId')
+  deleteBoard(@Param('boardId') id: number) {
     return this.boardsService.deleteBoard(+id);
   }
 }

@@ -12,6 +12,7 @@ import { Board } from './entities/board.entity';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { User } from 'src/users/entities/user.entity';
+import { date } from 'joi';
 
 @Injectable()
 export class BoardsService {
@@ -38,6 +39,7 @@ export class BoardsService {
 
     //사용자 정보 가져오기
     const user = await this.userRepository.findOne({ where: { id: userId } });
+
     if (!user) {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
@@ -50,10 +52,8 @@ export class BoardsService {
       user,
     });
 
-    //데이터 저장
     await this.boardRepository.save(newBoard);
 
-    //반환 데이터
     return {
       status: HttpStatus.CREATED,
       message: '보드 생성이 완료되었습니다.',
@@ -67,6 +67,7 @@ export class BoardsService {
     };
   }
 
+  /* 보드 목록 조회 */
   async getBoardList() {
     //캐싱 된 데이터 찾기
     const cachedBords = await this.cacheManager.get<Board[]>('boards');
@@ -91,6 +92,7 @@ export class BoardsService {
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });
+
     await this.cacheManager.set('boards', boards);
 
     const boardList = boards.map((board) => ({
@@ -107,8 +109,27 @@ export class BoardsService {
     };
   }
 
-  getBoardDetail(id: number) {
-    return `This action returns a #${id} board`;
+  /* 보드 상세 조회 */
+  async getBoardDetail(id: number) {
+    const board = await this.boardRepository.findOne({ where: { id } });
+
+    if (!board) {
+      throw new NotFoundException('존재하지 않는 보드입니다.');
+    }
+
+    return {
+      status: HttpStatus.OK,
+      date: {
+        boardId: board.id,
+        ownerId: board.user.id,
+        title: board.title,
+        description: board.description,
+        backgroundColor: board.backgroundColor,
+        isDeleted: board.isDeleted,
+        createdAt: board.createdAt,
+        updatedAt: board.updatedAt,
+      },
+    };
   }
 
   updateBoard(id: number, updateBoardDto: UpdateBoardDto) {
