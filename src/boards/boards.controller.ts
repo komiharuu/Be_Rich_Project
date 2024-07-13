@@ -16,6 +16,8 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/users/entities/user.entity';
+import { AuthUser } from 'src/auth/user.decorator';
 
 @ApiTags('보드')
 @Controller('boards')
@@ -38,8 +40,8 @@ export class BoardsController {
    */
   @HttpCode(HttpStatus.OK)
   @Get()
-  getBoardList() {
-    return this.boardsService.getBoardList();
+  getBoardList(@AuthUser() user: User) {
+    return this.boardsService.getBoardList(user);
   }
 
   /**
@@ -47,8 +49,8 @@ export class BoardsController {
    */
   @HttpCode(HttpStatus.OK)
   @Get(':boardId')
-  getBoardDetail(@Param('boardId') id: number) {
-    return this.boardsService.getBoardDetail(+id);
+  getBoardDetail(@Param('boardId') id: number, @AuthUser() user: User) {
+    return this.boardsService.getBoardDetail(+id, user);
   }
 
   /**
@@ -56,8 +58,12 @@ export class BoardsController {
    */
   @HttpCode(HttpStatus.OK)
   @Patch(':boardId')
-  updateBoard(@Param('boardId') id: number, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.updateBoard(+id, updateBoardDto);
+  updateBoard(
+    @Param('boardId') id: number,
+    @Body() updateBoardDto: UpdateBoardDto,
+    @AuthUser() user: User
+  ) {
+    return this.boardsService.updateBoard(+id, updateBoardDto, user);
   }
 
   /**
@@ -65,7 +71,7 @@ export class BoardsController {
    */
   @HttpCode(HttpStatus.OK)
   @Delete(':boardId')
-  deleteBoard(@Param('boardId') id: number) {
-    return this.boardsService.deleteBoard(+id);
+  deleteBoard(@Param('boardId') id: number, @AuthUser() user: User) {
+    return this.boardsService.deleteBoard(+id, user);
   }
 }

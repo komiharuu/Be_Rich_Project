@@ -40,8 +40,8 @@ export class Card {
   assignment_id: number;
 
   // 할당받은 사람의 id, 할당받은 사람이 없을 수도 있으니 nullable을 설정해놓았습니다.
-  @Column({ unsigned: true, nullable: true })
-  collaborator_id: number[];
+  // @Column({ unsigned: true, nullable: true })
+  // collaborator_id: number[];
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;
@@ -59,11 +59,11 @@ export class Card {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  user: User;
+  // @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn()
+  // user: User;
 
   @ManyToOne((type): typeof List => List, (list): Card[] => list.cards, {
     onDelete: 'CASCADE',
