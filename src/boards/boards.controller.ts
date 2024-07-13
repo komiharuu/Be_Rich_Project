@@ -8,40 +8,48 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('보드')
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
-  //가드 추가 필요
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  async createBoard(@Body() createBoardDto: CreateBoardDto) {
-    return await this.boardsService.createBoard(createBoardDto);
+  async createBoard(@Body() createBoardDto: CreateBoardDto, @Req() req) {
+    const userId = req.user.id;
+    return await this.boardsService.createBoard(createBoardDto, userId);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get()
   getBoardList() {
     return this.boardsService.getBoardList();
   }
 
-  @Get(':boardId')
+  @HttpCode(HttpStatus.OK)
+  @Get(':boardid')
   getBoardDetail(@Param('boardId') id: string) {
     return this.boardsService.getBoardDetail(+id);
   }
 
-  @Patch(':boardId')
+  @HttpCode(HttpStatus.OK)
+  @Patch(':boardid')
   updateBoard(@Param('boardId') id: string, @Body() updateBoardDto: UpdateBoardDto) {
     return this.boardsService.updateBoard(+id, updateBoardDto);
   }
 
-  @Delete(':boardId')
+  @HttpCode(HttpStatus.OK)
+  @Delete(':boardid')
   deleteBoard(@Param('boardId') id: string) {
     return this.boardsService.deleteBoard(+id);
   }
