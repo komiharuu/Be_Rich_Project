@@ -59,11 +59,11 @@ export class Card {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  user: User;
+  // @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn()
+  // user: User;
 
   @ManyToOne((type): typeof List => List, (list): Card[] => list.cards, {
     onDelete: 'CASCADE',
