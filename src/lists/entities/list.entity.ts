@@ -11,7 +11,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-@Entity()
+@Entity('lists')
 export class List {
   @PrimaryGeneratedColumn()
   id: number;
@@ -34,10 +34,10 @@ export class List {
   @OneToMany(() => Card, (card) => card.list)
   cards: Card[];
 
-  @ManyToOne(() => User, (user) => user.list, {
-    onDelete: 'CASCADE',
-  })
-  user: User;
+  // @ManyToOne(() => User, (user) => user.list, {
+  //   onDelete: 'CASCADE',
+  // })
+  // user: User;
 
   @ManyToOne(() => Board, (board) => board.list, {
     onDelete: 'CASCADE',

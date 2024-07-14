@@ -1,17 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ListsService } from './lists.service';
-import { CreateListDto } from './dto/create-list.dto';
+import { ListService } from './lists.service';
 import { UpdateListDto } from './dto/update-list.dto';
+import { Body, Controller, Post, UseGuards, Request, Get, Param, Patch, Delete } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { CreateListDto } from './dto/create-list.dto';
+import { List } from './entities/list.entity';
+
 
 @Controller('lists')
 export class ListsController {
-  constructor(private readonly listsService: ListsService) {}
-
-  @Post()
-  create(@Body() createListDto: CreateListDto) {
-    return this.listsService.create(createListDto);
+  deleteList(listId: number) {
+    throw new Error('Method not implemented.');
   }
+  updateList(listId: number, updateListDto: { title: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  getLists() {
+    throw new Error('Method not implemented.');
+  }
+  createList(createListDto: { title: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  constructor(private readonly listsService: ListService) {}
 
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  async create(@Body() createListDto: CreateListDto, @Request() req): Promise<List> {
+    const userId = req.user.userId;
+    return this.listsService.create(createListDto, userId);
+  }
   @Get()
   findAll() {
     return this.listsService.findAll();
