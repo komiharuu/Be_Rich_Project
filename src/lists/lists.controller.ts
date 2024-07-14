@@ -8,18 +8,7 @@ import { List } from './entities/list.entity';
 
 @Controller('lists')
 export class ListsController {
-  deleteList(listId: number) {
-    throw new Error('Method not implemented.');
-  }
-  updateList(listId: number, updateListDto: { title: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  getLists() {
-    throw new Error('Method not implemented.');
-  }
-  createList(createListDto: { title: string; }) {
-    throw new Error('Method not implemented.');
-  }
+
   constructor(private readonly listsService: ListService) {}
 
   @UseGuards(AuthGuard('jwt'))
@@ -28,23 +17,22 @@ export class ListsController {
     const userId = req.user.userId;
     return this.listsService.create(createListDto, userId);
   }
+
   @Get()
-  findAll() {
+  async findAll(): Promise<List[]> {
     return this.listsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.listsService.findOne(+id);
-  }
-
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateListDto: UpdateListDto) {
-    return this.listsService.update(+id, updateListDto);
+  async update(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
+    return this.listsService.update(id, updateListDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.listsService.remove(+id);
+  async remove(@Param('id') id: number): Promise<void> {
+    return this.listsService.delete(id);
   }
+
 }

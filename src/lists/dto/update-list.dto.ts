@@ -1,15 +1,7 @@
-import { IsNotEmpty, IsString, IsInt, IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateListDto {
-  @IsString()
-  @IsOptional()
-  title?: string;
 
-  @IsInt()
-  @IsOptional()
-  position?: number;
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateListDto } from './create-list.dto';
 
-  @IsBoolean()
-  @IsOptional()
-  is_deleted?: boolean;
-}
+export class UpdateListDto extends PartialType(CreateListDto) {}
+
