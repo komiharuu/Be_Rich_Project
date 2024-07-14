@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { GetCommentListDto } from './dto/get-comment-list.dto';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  // 댓글 생성
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentsService.create(createCommentDto);
+  async createComment(@Body() createCommentDto: CreateCommentDto) {
+    return await this.commentsService.createComment(createCommentDto);
   }
 
+  // 댓글 전체 조회
   @Get()
-  findAll() {
-    return this.commentsService.findAll();
+  async getCommentList(@Body() getCommentListDto: GetCommentListDto) {
+    return await this.commentsService.getCommentList(getCommentListDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
+  // 댓글 수정
+  @Patch(':commentId')
+  async updateComment(
+    @Param('commentId') commentId: number,
+    @Body() updateCommentDto: UpdateCommentDto
+  ) {
+    await this.commentsService.updateComment(commentId, updateCommentDto);
+    return { statusCode: HttpStatus.CREATED, message: '댓글 수정에 성공했습니다.' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  @Delete(':commentId')
+  async deleteComment(@Param('commentId') commentId: number) {
+    await this.commentsService.deleteComment(commentId);
+    return { statusCode: HttpStatus.CREATED, message: '댓글 삭제에 성공했습니다.' };
   }
 }
