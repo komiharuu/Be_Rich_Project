@@ -11,6 +11,7 @@ import {
 import { Checklist } from './checklist.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { List } from 'src/lists/entities/list.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('cards')
 export class Card {
@@ -35,17 +36,14 @@ export class Card {
   @Column({ unsigned: true })
   position: number;
 
-  // 할당한 사람의 Id- 따로설정한 이유: 카드 제작자랑 할당자랑 다를 수 있기 때문
   @Column({ unsigned: true })
   assignment_id: number;
 
-  // 할당받은 사람의 id, 할당받은 사람이 없을 수도 있으니 nullable을 설정해놓았습니다.
   @Column({ unsigned: true, nullable: true })
   collaborator_id: number[];
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;
-  // 사유: 트렐로 홈페이지는  시작일 설정이 의무가 아니기 때문에 nullable을 설정함.
 
   @Column({ type: 'datetime', nullable: true })
   duedate: Date;
@@ -59,21 +57,21 @@ export class Card {
   @UpdateDateColumn()
   updated_at: Date;
 
-  // @ManyToOne((type): typeof User => User, (user): Card[] => user.cards, {
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn()
-  // user: User;
+  @ManyToOne(() => User, (user) => user.cards, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  user: User;
 
-  @ManyToOne((type): typeof List => List, (list): Card[] => list.cards, {
+  @ManyToOne(() => List, (list) => list.cards, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
   list: List;
 
-  @OneToMany((type): typeof Checklist => Checklist, (checklists) => checklists.card, {})
+  @OneToMany(() => Checklist, (checklists) => checklists.card, {})
   checklists: Checklist[];
 
-  @OneToMany((type): typeof Comment => Comment, (comments) => comments.card, {})
+  @OneToMany(() => Comment, (comments) => comments.card, {})
   comments: Comment[];
 }

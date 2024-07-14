@@ -43,4 +43,5 @@ export class List {
     onDelete: 'CASCADE',
   })
   board: Board;
+  user: any;
 }

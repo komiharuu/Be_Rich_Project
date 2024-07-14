@@ -1,6 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Board } from 'src/boards/entities/board.entity';
 import { Member } from 'src/boards/entities/member.entity';
+import { List } from 'src/lists/entities/list.entity';
+import { Card } from 'src/cards/entities/card.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 
 @Entity('users')
 export class User {
@@ -36,4 +39,13 @@ export class User {
 
   @OneToMany(() => Member, (member) => member.user)
   members: Member[];
+
+  @OneToMany(() => List, (list) => list.user)
+  lists: List[];
+
+  @OneToMany(() => Comment, (comments) => comments.user, {})
+  comments: Comment[];
+
+  @OneToMany(() => Card, (cards) => cards.user, {})
+  cards: Card[];
 }
