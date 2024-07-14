@@ -76,8 +76,6 @@ export class Card {
   })
   checklists: Checklist[];
 
-  @OneToMany((type): typeof Comment => Comment, (comments) => comments.card, {
-    cascade: true,
-  })
+  @OneToMany((type): typeof Comment => Comment, (comments) => comments.card, {})
   comments: Comment[];
 }
