@@ -60,6 +60,7 @@ describe('CommentsController', () => {
   describe('createComment', () => {
     it('should create comment', async () => {
       // GIVEN
+      // 필요한 설정을 하는 부분
       const createCommentResult = {
         id: 1,
         comment: 'Test Comment',
@@ -69,13 +70,21 @@ describe('CommentsController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
+      // 모킹된 서비스 코드의 반환값을 설정하는 부분
       mockCommentsService.createComment.mockResolvedValue(createCommentResult);
 
-      // THEN
+      // WHEN
+      // 실제로 컨트롤러의 메서드를 동작시키는 부분
+      // 컨트롤러 메서드의 매개변수로 req, createCardDto를 사용
       const response = await controller.createComment(req, createCommentDto);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
       expect(response).toHaveBeenCalledTimes(1);
+      // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toBe(createCommentResult);
+      // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockCommentsService.createComment).toHaveBeenCalledWith(req.user.id, createCommentDto);
     });
   });
@@ -98,13 +107,14 @@ describe('CommentsController', () => {
         },
       ];
       const req = { user: { id: 1 } };
-
-      // WHEN
       mockCommentsService.getCommentList.mockResolvedValue(getCommentListResult);
 
-      // THEN
+      // WHEN
       const response = await controller.getCommentList(req, getCommentListDto);
+
+      // THEN
       expect(response).toHaveBeenCalledTimes(1);
+      // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
       expect(response).toBe(getCommentListResult);
       expect(mockCommentsService.getCommentList).toHaveBeenCalledWith(
@@ -123,11 +133,12 @@ describe('CommentsController', () => {
       };
       const req = { params: { commentId: 1 }, user: { id: 1 } };
 
-      // WHEN
       mockCommentsService.updateComment.mockResolvedValue(updateCommentResult);
 
-      // THEN
+      // WHEN
       const response = await controller.updateComment(req, req.params.commentId, updateCommentDto);
+
+      // THEN
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateCommentResult);
       expect(mockCommentsService.updateComment).toHaveBeenCalledWith(
@@ -147,11 +158,12 @@ describe('CommentsController', () => {
       };
       const req = { params: { commentId: 1 }, user: { id: 1 } };
 
-      // WHEN
       mockCommentsService.deleteComment.mockResolvedValue(deleteCommentResult);
 
-      // THEN
+      // WHEN
       const response = await controller.deleteComment(req, req.params.commentId);
+
+      // THEN
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteCommentResult);
       expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(

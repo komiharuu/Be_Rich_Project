@@ -76,6 +76,7 @@ describe('CardsController', () => {
   describe('createCard', () => {
     it('should create card', async () => {
       // GIVEN
+      // 필요한 설정을 하는 부분
       const createCardResult = {
         id: 1,
         listId: 1,
@@ -87,18 +88,27 @@ describe('CardsController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
+      // 모킹된 서비스 코드의 반환값을 설정하는 부분
       mockCardsService.createCard.mockResolvedValue(createCardResult);
 
-      // THEN
+      // WHEN
+      // 실제로 컨트롤러의 메서드를 동작시키는 부분
+      // 컨트롤러 메서드의 매개변수로 req, createCardDto를 사용
       const response = await controller.createCard(req, createCardDto);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
       expect(response).toHaveBeenCalledTimes(1);
+      // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toBe(createCardResult);
+      // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockCardsService.createCard).toHaveBeenCalledWith(req.user.id, createCardDto);
     });
 
     it('should get card list', async () => {
       // GIVEN
+      // 필요한 설정을 하는 부분
       const getCardListResult = [
         {
           id: 1,
@@ -117,12 +127,14 @@ describe('CardsController', () => {
       ];
       const req = { user: { id: 1 } };
 
+      mockCardsService.getCardList.mockResolvedValue(getCardListResult);
+
       // WHEN
-      mockCardsService.getCardList(getCardListResult);
+      const response = await controller.getCardList(req, getCardListDto);
 
       // THEN
-      const response = await controller.getCardList(req, getCardListDto);
       expect(response).toHaveBeenCalledTimes(1);
+      // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
       expect(response).toBe(getCardListResult);
       expect(mockCardsService.getCardList).toHaveBeenCalledWith(req.user.id, getCardListDto);
@@ -153,12 +165,15 @@ describe('CardsController', () => {
       };
       const req = { params: { cardId: 1 }, user: { id: 1 } };
 
+      mockCardsService.getCardDetail.mockResolvedValue(getCardDetailResult);
+
       // WHEN
-      mockCardsService.getCardDetail(getCardDetailResult);
+      const response = await controller.getCardDetail(req, req.params.cardId);
 
       // THEN
-      const response = await controller.getCardDetail(req, req.params.cardId);
       expect(response).toHaveBeenCalledTimes(1);
+      // 결과값의 인스턴스가 배열인지 확인
+      expect(response).toBeInstanceOf(Array);
       expect(response).toBe(getCardDetailResult);
       expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.user.id, req.params.cardId);
     });
@@ -171,11 +186,12 @@ describe('CardsController', () => {
       };
       const req = { params: { cardId: 1 }, user: { id: 1 } };
 
-      // WHEN
       mockCardsService.updateCard.mockResolvedValue(updateCardResult);
 
-      // THEN
+      // WHEN
       const response = await controller.updateCard(req, req.params.cardId, updateCardDto);
+
+      // THEN
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateCardResult);
       expect(mockCardsService.updateCard).toHaveBeenCalledWith(
@@ -193,11 +209,12 @@ describe('CardsController', () => {
       };
       const req = { params: { cardId: 1 }, user: { id: 1 } };
 
-      // WHEN
       mockCardsService.deleteCard.mockResolvedValue(deleteCardResult);
 
-      // THEN
+      // WHEN
       const response = await controller.deleteCard(req, req.params.cardId);
+
+      // THEN
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteCardResult);
       expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.user.id, req.params.cardId);
