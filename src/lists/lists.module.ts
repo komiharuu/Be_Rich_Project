@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ListsService } from './lists.service';
+import { ListService } from './lists.service';
 import { ListsController } from './lists.controller';
 
 @Module({
   controllers: [ListsController],
-  providers: [ListsService],
+  providers: [ListService],
 })
 export class ListsModule {}

@@ -11,7 +11,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-@Entity()
+@Entity('lists')
 export class List {
   @PrimaryGeneratedColumn()
   id: number;
