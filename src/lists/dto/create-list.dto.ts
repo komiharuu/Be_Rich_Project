@@ -9,9 +9,6 @@ export class CreateListDto {
   @IsNotEmpty({ message: '포지션을 입력해주세요.' })
   position: number;
 
-  @IsBoolean()
-  @IsOptional()
-  is_deleted?: boolean;
 
   @IsInt()
   @IsNotEmpty({ message: '보드 ID를 입력해주세요.' })

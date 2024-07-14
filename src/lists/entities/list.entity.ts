@@ -34,14 +34,14 @@ export class List {
   @OneToMany(() => Card, (card) => card.list)
   cards: Card[];
 
-  // @ManyToOne(() => User, (user) => user.list, {
-  //   onDelete: 'CASCADE',
-  // })
-  // user: User;
+  @ManyToOne(() => User, (user) => user.lists, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
 
   @ManyToOne(() => Board, (board) => board.list, {
     onDelete: 'CASCADE',
   })
   board: Board;
-  user: any;
+  
 }
