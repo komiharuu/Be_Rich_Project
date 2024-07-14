@@ -24,7 +24,7 @@ export class Card {
   list_id: number;
 
   @Column({ unique: true, type: 'varchar' })
-  name: string;
+  title: string;
 
   @Column({ type: 'text' })
   description: string;
@@ -71,9 +71,7 @@ export class Card {
   @JoinColumn()
   list: List;
 
-  @OneToMany((type): typeof Checklist => Checklist, (checklists) => checklists.card, {
-    cascade: true,
-  })
+  @OneToMany((type): typeof Checklist => Checklist, (checklists) => checklists.card, {})
   checklists: Checklist[];
 
   @OneToMany((type): typeof Comment => Comment, (comments) => comments.card, {})
