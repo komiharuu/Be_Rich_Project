@@ -88,13 +88,19 @@ describe('BoardsController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 createBoard 메서드를 실행하면 createBoardResult 값을 반환한다는 의미
       mockBoardsService.createBoard.mockResolvedValue(createBoardResult);
 
-      // THEN
+      // WHEN
+      // 실제로 컨트롤러의 메서드를 동작시키는 부분
+      // 컨트롤러 메서드의 매개변수로 req, createBoardDto를 사용
       // req는  사용자가 보드의 owner인지 확인하기 위한 용도 (될 수 있으면 owner 확인용 인터셉터나 가드가 있으면 좋을 것 같음)
       const response = await controller.createBoard(req, createBoardDto);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 createBoard 메서드의 결과가 createBoardResult와 같은지 확인
       expect(response).toBe(createBoardResult);
       // 컨트롤러에서 서비스의 createBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -123,13 +129,19 @@ describe('BoardsController', () => {
       ];
       const req = { user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 getBoardList 메서드를 실행하면 getBoardListResult 값을 반환한다는 의미
       mockBoardsService.getBoardList.mockResolvedValue(getBoardListResult);
 
-      // THEN
+      // WHEN
+      // 실제로 컨트롤러의 메서드를 동작시키는 부분
+      // 컨트롤러 메서드의 매개변수로 req를 사용
       // req는  사용자가 보드의 owner인지 확인하기 위한 용도
       const response = await controller.getBoardList(req);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // getBoardList 메서드의 결과가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
       // 컨트롤러의 실제 getBoardList 메서드의 결과가 getBoardListResult와 같은지 확인
@@ -154,13 +166,17 @@ describe('BoardsController', () => {
       };
       const req = { params: { boardId: 1 }, user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 getBoardDetail 메서드를 실행하면 getBoardDetailResult 값을 반환한다는 의미
       mockBoardsService.getBoardDetail.mockResolvedValue(getBoardDetailResult);
 
-      // THEN
+      // WHEN
       // req는  사용자가 보드의 owner인지 확인하기 위한 용도
       const response = await controller.getBoardDetail(req, req.params.boardId);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 getBoardDetail 메서드의 결과가 getBoardDetailResult와 같은지 확인
       expect(response).toBe(getBoardDetailResult);
       // 컨트롤러에서 서비스의 getBoardDetail 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -180,13 +196,17 @@ describe('BoardsController', () => {
       };
       const req = { params: { boardId: 1 }, user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 updateBoard 메서드를 실행하면 updateBoardResult 값을 반환한다는 의미
       mockBoardsService.updateBoard.mockResolvedValue(updateBoardResult);
 
-      // THEN
+      // WHEN
       // req는  사용자가 보드의 owner인지 확인하기 위한 용도
       const response = await controller.updateBoard(req, req.params.boardId, updateBoardDto);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 updateBoard 메서드의 결과가 updateBoardResult 같은지 확인
       expect(response).toBe(updateBoardResult);
       // 컨트롤러에서 서비스의 updateBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -207,13 +227,17 @@ describe('BoardsController', () => {
       };
       const req = { params: { boardId: 1 }, user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 deleteBoard 메서드를 실행하면 deleteBoardResult 값을 반환한다는 의미
       mockBoardsService.deleteBoard.mockResolvedValue(deleteBoardResult);
 
-      // THEN
+      // WHEN
       // req는  사용자가 보드의 owner인지 확인하기 위한 용도
       const response = await controller.deleteBoard(req, req.params.boardId);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 deleteBoard 메서드의 결과가 deleteBoardResult 같은지 확인
       expect(response).toBe(deleteBoardResult);
       // 컨트롤러에서 서비스의 deleteBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -230,12 +254,16 @@ describe('BoardsController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 createInvitation 메서드를 실행하면 createInvitationResult 값을 반환한다는 의미
       mockBoardsService.createInvitation.mockResolvedValue(createInvitationResult);
 
-      // THEN
+      // WHEN
       const response = await controller.createInvitation(req, createInvitationDto);
+
+      // THEN
+      // 테스트 진행하는 부분
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 createInvitation 메서드의 결과에 token이 있는지 확인
       expect(response).toHaveProperty('token');
       // 컨트롤러의 실제 createInvitation 메서드의 token이 문자열인지 확인
@@ -259,14 +287,15 @@ describe('BoardsController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
       // 모킹된 서비스의 acceptInvitation 메서드를 실행하면 acceptInvitationResult 값을 반환한다는 의미
       mockBoardsService.acceptInvitation.mockResolvedValue(acceptInvitationResult);
 
-      // THEN
+      // WHEN
       const response = await controller.acceptInvitation(req, acceptInvitationDto);
-      // acceptInvitation 메서드가 오류 없이 1번만 반환되었는지 확인
-      expect(response).toHaveReturnedTimes(1);
+
+      // THEN
+      // 컨트롤러 메서드가 1번 실행되었는지 확인
+      expect(response).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 acceptInvitation 메서드의 결과가 acceptInvitationResult 같은지 확인
       expect(response).toBe(acceptInvitationResult);
       // 컨트롤러에서 서비스의 acceptInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
