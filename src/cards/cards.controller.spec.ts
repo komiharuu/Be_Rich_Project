@@ -20,6 +20,11 @@ const createCardDto = {
   color: '#FFFFFF',
 };
 
+// Get Card List DTO
+const getCardListDto = {
+  listId: 1,
+};
+
 // Update card DTO
 const updateCardDto = {
   title: 'Test Title',
@@ -80,15 +85,16 @@ describe('CardsController', () => {
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
+      const req = { user: { id: 1 } };
 
       // WHEN
       mockCardsService.createCard.mockResolvedValue(createCardResult);
 
       // THEN
-      const response = await controller.createCard(createCardDto);
+      const response = await controller.createCard(req, createCardDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(createCardResult);
-      expect(mockCardsService.createCard).toHaveBeenCalledWith(createCardDto);
+      expect(mockCardsService.createCard).toHaveBeenCalledWith(req.user.id, createCardDto);
     });
 
     it('should get card list', async () => {
@@ -109,15 +115,17 @@ describe('CardsController', () => {
           updatedAt: '2024-07-05T23:08:07.001Z',
         },
       ];
+      const req = { user: { id: 1 } };
 
       // WHEN
       mockCardsService.getCardList(getCardListResult);
 
       // THEN
-      const response = await controller.getCardList();
+      const response = await controller.getCardList(req, getCardListDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBeInstanceOf(Array);
       expect(response).toBe(getCardListResult);
+      expect(mockCardsService.getCardList).toHaveBeenCalledWith(req.user.id, getCardListDto);
     });
 
     it('should get card detail', async () => {
@@ -143,16 +151,16 @@ describe('CardsController', () => {
           },
         ],
       };
-      const req = { params: { listId: 1 } };
+      const req = { params: { cardId: 1 }, user: { id: 1 } };
 
       // WHEN
       mockCardsService.getCardDetail(getCardDetailResult);
 
       // THEN
-      const response = await controller.getCardDetail(req);
+      const response = await controller.getCardDetail(req, req.params.cardId);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(getCardDetailResult);
-      expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.params.listId);
+      expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.user.id, req.params.cardId);
     });
 
     it('should update card', async () => {
@@ -161,16 +169,20 @@ describe('CardsController', () => {
         status: 201,
         message: '카드 수정에 성공했습니다.',
       };
-      const req = { params: { cardId: 1 } };
+      const req = { params: { cardId: 1 }, user: { id: 1 } };
 
       // WHEN
       mockCardsService.updateCard.mockResolvedValue(updateCardResult);
 
       // THEN
-      const response = await controller.updateCard(req.params.cardId, updateCardDto);
+      const response = await controller.updateCard(req, req.params.cardId, updateCardDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateCardResult);
-      expect(mockCardsService.updateCard).toHaveBeenCalledWith(req.params.cardId);
+      expect(mockCardsService.updateCard).toHaveBeenCalledWith(
+        req.user.id,
+        req.params.cardId,
+        updateCardDto
+      );
     });
 
     it('should delete card', async () => {
@@ -179,16 +191,16 @@ describe('CardsController', () => {
         status: 201,
         message: '카드 삭제에 성공했습니다.',
       };
-      const req = { params: { cardId: 1 } };
+      const req = { params: { cardId: 1 }, user: { id: 1 } };
 
       // WHEN
       mockCardsService.deleteCard.mockResolvedValue(deleteCardResult);
 
       // THEN
-      const response = await controller.deleteCard(req.params.cardId);
+      const response = await controller.deleteCard(req, req.params.cardId);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteCardResult);
-      expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.params.cardId);
+      expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.user.id, req.params.cardId);
     });
   });
 });
