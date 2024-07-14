@@ -67,15 +67,16 @@ describe('CommentsController', () => {
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
+      const req = { user: { id: 1 } };
 
       // WHEN
       mockCommentsService.createComment.mockResolvedValue(createCommentResult);
 
       // THEN
-      const response = await controller.createComment(createCommentDto);
+      const response = await controller.createComment(req, createCommentDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(createCommentResult);
-      expect(mockCommentsService.createComment).toHaveBeenCalledWith(createCommentDto);
+      expect(mockCommentsService.createComment).toHaveBeenCalledWith(req.user.id, createCommentDto);
     });
   });
 
@@ -96,16 +97,20 @@ describe('CommentsController', () => {
           updatedAt: '2024-07-05T23:08:07.001Z',
         },
       ];
+      const req = { user: { id: 1 } };
 
       // WHEN
       mockCommentsService.getCommentList.mockResolvedValue(getCommentListResult);
 
       // THEN
-      const response = await controller.getCommentList(getCommentListDto);
+      const response = await controller.getCommentList(req, getCommentListDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBeInstanceOf(Array);
       expect(response).toBe(getCommentListResult);
-      expect(mockCommentsService.getCommentList).toHaveBeenCalledWith(getCommentListDto);
+      expect(mockCommentsService.getCommentList).toHaveBeenCalledWith(
+        req.user.id,
+        getCommentListDto
+      );
     });
   });
 
@@ -116,16 +121,17 @@ describe('CommentsController', () => {
         status: 201,
         message: '댓글 수정에 성공했습니다.',
       };
-      const req = { params: { commentId: 1 } };
+      const req = { params: { commentId: 1 }, user: { id: 1 } };
 
       // WHEN
       mockCommentsService.updateComment.mockResolvedValue(updateCommentResult);
 
       // THEN
-      const response = await controller.updateComment(req.params.commentId, updateCommentDto);
+      const response = await controller.updateComment(req, req.params.commentId, updateCommentDto);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(updateCommentResult);
       expect(mockCommentsService.updateComment).toHaveBeenCalledWith(
+        req.user.id,
         req.params.commentId,
         updateCommentDto
       );
@@ -139,16 +145,19 @@ describe('CommentsController', () => {
         status: 201,
         message: '댓글 삭제에 성공했습니다.',
       };
-      const req = { params: { commentId: 1 } };
+      const req = { params: { commentId: 1 }, user: { id: 1 } };
 
       // WHEN
       mockCommentsService.deleteComment.mockResolvedValue(deleteCommentResult);
 
       // THEN
-      const response = await controller.deleteComment(req.params.commentId);
+      const response = await controller.deleteComment(req, req.params.commentId);
       expect(response).toHaveBeenCalledTimes(1);
       expect(response).toBe(deleteCommentResult);
-      expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(req.params.commentId);
+      expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(
+        req.user.id,
+        req.params.commentId
+      );
     });
   });
 });
