@@ -96,7 +96,7 @@ describe('AuthController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockAuthService.signUp).toHaveBeenCalledTimes(1);
       // email 프로퍼티가 있는지 확인
       expect(response).toHaveProperty('email');
       // nickname 프로퍼티가 있는지 확인
@@ -104,7 +104,7 @@ describe('AuthController', () => {
       // profileImg 프로퍼티가 있는지 확인
       expect(response).toHaveProperty('profileImg');
       // 컨트롤러의 실제 signUp 메서드의 결과가 signUpResult와 같은지 확인
-      expect(response).toBe(signUpResult);
+      expect(response).toEqual(signUpResult);
       // 컨트롤러에서 서비스의 sinUp 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockAuthService.signUp).toHaveBeenCalledWith(signUpDto);
     });
@@ -130,7 +130,7 @@ describe('AuthController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockAuthService.signIn).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
       expect(response).toHaveProperty('accessToken');
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
@@ -140,7 +140,7 @@ describe('AuthController', () => {
       // 컨트롤러의 실제 signIn 메서드의 refreshToken이 문자열인지 확인
       expect(typeof response.refreshToken).toBe('string');
       // 실행 결과값과 임의의 반환값이 같은지 확인
-      expect(response).toBe(signInResult);
+      expect(response).toEqual(signInResult);
       // 컨트롤러에서 서비스의 signIn 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockAuthService.signIn).toHaveBeenCalledWith(signInDto);
     });

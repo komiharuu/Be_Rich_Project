@@ -85,9 +85,9 @@ describe('ListsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockListsService.createList).toHaveBeenCalledTimes(1);
       // 실행 결과값과 임의의 반환값이 같은지 확인
-      expect(response).toBe(createListResult);
+      expect(response).toEqual(createListResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockListsService.createList).toHaveBeenCalledWith(req.user.id, createListDto);
     });
@@ -118,10 +118,10 @@ describe('ListsController', () => {
       const response = await controller.getLists(req, getListsDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockListsService.getLists).toHaveBeenCalledTimes(1);
       // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
-      expect(response).toBe(getListsResult);
+      expect(response).toEqual(getListsResult);
       expect(mockListsService.getLists).toHaveBeenCalledWith(req.user.id, getListsDto);
     });
   });
@@ -141,8 +141,8 @@ describe('ListsController', () => {
       const response = await controller.updateList(req, req.params.listId, updateListDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(updateListResult);
+      expect(mockListsService.updateList).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(updateListResult);
       expect(mockListsService.updateList).toHaveBeenCalledWith(
         req.user.id,
         req.params.listId,
@@ -166,8 +166,8 @@ describe('ListsController', () => {
       const response = await controller.deleteList(req, req.params.listId);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(deleteListResult);
+      expect(mockListsService.deleteList).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(deleteListResult);
       expect(mockListsService.deleteList).toHaveBeenCalledWith(req.user.id, req.params.listId);
     });
   });
