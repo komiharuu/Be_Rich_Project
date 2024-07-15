@@ -16,7 +16,7 @@ export class CommentsService {
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto) {
     const { comment } = createCommentDto;
-    const newComment = this.commentRepository.create(createCommentDto);
+    const newComment = this.commentRepository.save({ comment });
     return newComment;
   }
 
@@ -40,9 +40,9 @@ export class CommentsService {
     }
 
     // 댓글을 수정합니다.
-    await this.commentRepository.update(commentId, updateCommentDto);
+    const updateComment = await this.commentRepository.update(commentId, updateCommentDto);
 
-    return comment;
+    return updateComment;
   }
 
   // 댓글 삭제 api
