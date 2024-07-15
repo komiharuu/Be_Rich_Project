@@ -1,6 +1,6 @@
 import { ListService } from './lists.service';
 import { UpdateListDto } from './dto/update-list.dto';
-import { Body, Controller, Post, UseGuards, Request, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, Get, Param, Patch, Delete, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateListDto } from './dto/create-list.dto';
 import { List } from './entities/list.entity';
@@ -25,10 +25,11 @@ export class ListsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async create(@Body() createListDto: CreateListDto, @Request() req): Promise<List> {
+  async create(@Body() createListDto: CreateListDto, @Req() req): Promise<List> {
     const userId = req.user.userId;
     return this.listsService.create(createListDto, userId);
   }
+
 
   @Get()
   async findAll(): Promise<List[]> {

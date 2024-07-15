@@ -1,13 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Checklist } from './checklist.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { List } from 'src/lists/entities/list.entity';
@@ -39,8 +31,8 @@ export class Card {
   @Column({ unsigned: true })
   assignment_id: number;
 
-  @Column({ unsigned: true, nullable: true })
-  collaborator_id: number[];
+  @Column({ type: 'json', nullable: true })
+  collaborator_id: number[]; 
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;
@@ -60,13 +52,11 @@ export class Card {
   @ManyToOne(() => User, (user) => user.cards, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
   user: User;
 
   @ManyToOne(() => List, (list) => list.cards, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
   list: List;
 
   @OneToMany(() => Checklist, (checklists) => checklists.card, {})

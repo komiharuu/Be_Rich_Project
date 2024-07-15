@@ -1,9 +1,5 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { configModuleValidationSchema } from './configs/env-validation.config';
-import { typeOrmModuleOptions } from './configs/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -11,8 +7,10 @@ import { BoardsModule } from './boards/boards.module';
 import { ListsModule } from './lists/lists.module';
 import { CardsModule } from './cards/cards.module';
 import { CommentsModule } from './comments/comments.module';
+import { configModuleValidationSchema } from './configs/env-validation.config';
+import { typeOrmModuleOptions } from './configs/database.config';
+
 @Module({
-  // 전역적 설치
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
@@ -26,7 +24,10 @@ import { CommentsModule } from './comments/comments.module';
     CardsModule,
     CommentsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // 전역 프리픽스 설정
+    consumer.apply().forRoutes('api');
+  }
+}
