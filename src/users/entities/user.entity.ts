@@ -28,6 +28,12 @@ export class User {
   @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
 
+  @Column({ default: 'USER' }) 
+  role: string;
+
+  @Column({ default: 0 }) 
+  point: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
