@@ -21,9 +21,7 @@ export class BoardsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
-  /**
-   * 보드 생성
-   *  */
+  /* 보드 생성 */
   async createBoard(createBoardDto: CreateBoardDto, userId: number) {
     const { title, description, backgroundColor } = createBoardDto;
 
@@ -51,6 +49,7 @@ export class BoardsService {
       user,
     });
 
+    //생성한 보드 데이터베이스에 저장
     await this.boardRepository.save(newBoard);
 
     return {
@@ -133,6 +132,7 @@ export class BoardsService {
     };
   }
 
+  /* 보드 수정 */
   async updateBoard(id: number, updateBoardDto: UpdateBoardDto, user: User) {
     const { title, description, backgroundColor } = updateBoardDto;
 
@@ -164,11 +164,12 @@ export class BoardsService {
     };
   }
 
+  /* 보드 삭제 */
   async deleteBoard(id: number, user: User) {
     //보드 존재 여부 확인
     const board = await this.boardRepository.findOne({ where: { id, user } });
 
-    //isDeleted값 엡데이트
+    //isDeleted값 업데이트
     board.isDeleted = true;
 
     //보드 삭제
@@ -179,4 +180,6 @@ export class BoardsService {
       message: '보드 삭제에 성공했습니다.',
     };
   }
+
+  //보드 초대 - 로드메일러
 }
