@@ -72,6 +72,6 @@ export class Card {
   @OneToMany(() => Checklist, (checklists) => checklists.card, {})
   checklists: Checklist[];
 
-  @OneToMany(() => Comment, (comments) => comments.card, {})
+  @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
   comments: Comment[];
 }
