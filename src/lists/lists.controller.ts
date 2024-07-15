@@ -8,6 +8,18 @@ import { List } from './entities/list.entity';
 
 @Controller('lists')
 export class ListsController {
+  deleteList(req: { params: { listId: number; }; user: { id: number; }; }, listId: number) {
+    throw new Error('Method not implemented.');
+  }
+  updateList(req: { params: { listId: number; }; user: { id: number; }; }, listId: number, updateListDto: { title: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  createList(req: { user: { id: number; }; }, createListDto: { boardId: number; title: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  getLists(req: { user: { id: number; }; }, getListsDto: { board: number; }) {
+    throw new Error('Method not implemented.');
+  }
 
   constructor(private readonly listsService: ListService) {}
 
