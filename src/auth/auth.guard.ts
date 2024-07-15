@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt'; 
 import { Request } from 'express';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
+      const payload = this.jwtService.verify(token); 
       request.user = payload;
     } catch {
       throw new UnauthorizedException('유효하지 않은 인증 정보입니다.');
