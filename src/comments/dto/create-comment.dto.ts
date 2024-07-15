@@ -1,13 +1,14 @@
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
+import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 
 export class CreateCommentDto {
-  //   @Type(() => Number)
-  //   @IsNumber()
-  //   @IsNotEmpty({ message: '카드 id를 입력해주세요.' })
-  //   card_id: number;
+  @Type(() => Number)
+  @IsNumber()
+  @IsNotEmpty({ message: COMMENTMESSAGE.COMMON.CARDID.REQUIRED })
+  cardId: number;
 
   @IsString()
-  @IsNotEmpty({ message: '내용을 입력해주세요.' })
+  @IsNotEmpty({ message: COMMENTMESSAGE.COMMON.COMMENT.REQUIRED })
   comment: string;
 }

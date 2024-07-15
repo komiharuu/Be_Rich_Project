@@ -5,6 +5,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { GetCommentListDto } from './dto/get-comment-list.dto';
+import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 
 @Injectable()
 export class CommentsService {
@@ -15,8 +16,9 @@ export class CommentsService {
 
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto) {
-    const newComment = this.commentRepository.create(createCommentDto);
-    return this.commentRepository.save(newComment);
+    const { comment, cardId: card_id } = createCommentDto;
+    const newComment = this.commentRepository.save({ comment, card_id });
+    return newComment;
   }
 
   // 댓글 전체조회 api
@@ -24,7 +26,7 @@ export class CommentsService {
     const { cardId: card_id } = getCommentListDto;
     const comments = await this.commentRepository.find({ where: { card_id } });
     if (!comments) {
-      throw new NotFoundException(`해당 카드의 댓글을 찾을 수 없습니다.`);
+      throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.CARD_COMMENT);
     }
     return comments;
   }
@@ -35,13 +37,13 @@ export class CommentsService {
     const comment = await this.commentRepository.findOne({ where: { id: commentId } });
 
     if (!comment) {
-      throw new NotFoundException(`댓글을 찾을 수 없습니다.`);
+      throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.COMMENT);
     }
 
     // 댓글을 수정합니다.
-    await this.commentRepository.update(commentId, updateCommentDto);
+    const updateComment = await this.commentRepository.update(commentId, updateCommentDto);
 
-    return this.commentRepository.findOne({ where: { id: commentId } });
+    return updateComment;
   }
 
   // 댓글 삭제 api
@@ -49,7 +51,7 @@ export class CommentsService {
     const comment = await this.commentRepository.findOne({ where: { id: commentId } });
 
     if (!comment) {
-      throw new NotFoundException(`댓글을 찾을 수 없습니다.`);
+      throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.COMMENT);
     }
 
     // 댓글을 삭제합니다

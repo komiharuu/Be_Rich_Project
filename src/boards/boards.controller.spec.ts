@@ -100,9 +100,9 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.createBoard).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 createBoard 메서드의 결과가 createBoardResult와 같은지 확인
-      expect(response).toBe(createBoardResult);
+      expect(response).toEqual(createBoardResult);
       // 컨트롤러에서 서비스의 createBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.createBoard).toHaveBeenCalledWith(req.user.id, createBoardDto);
     });
@@ -141,11 +141,11 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.getBoardList).toHaveBeenCalledTimes(1);
       // getBoardList 메서드의 결과가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
       // 컨트롤러의 실제 getBoardList 메서드의 결과가 getBoardListResult와 같은지 확인
-      expect(response).toBe(getBoardListResult);
+      expect(response).toEqual(getBoardListResult);
       // 보드 목록 조회는 자신이 속한 보드만 출력되어야 하기 때문에
       expect(mockBoardsService.getBoardList).toHaveBeenCalledWith(req.user.id);
     });
@@ -176,9 +176,9 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.getBoardDetail).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 getBoardDetail 메서드의 결과가 getBoardDetailResult와 같은지 확인
-      expect(response).toBe(getBoardDetailResult);
+      expect(response).toEqual(getBoardDetailResult);
       // 컨트롤러에서 서비스의 getBoardDetail 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.getBoardDetail).toHaveBeenCalledWith(
         req.params.boardId,
@@ -206,9 +206,9 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.updateBoard).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 updateBoard 메서드의 결과가 updateBoardResult 같은지 확인
-      expect(response).toBe(updateBoardResult);
+      expect(response).toEqual(updateBoardResult);
       // 컨트롤러에서 서비스의 updateBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.updateBoard).toHaveBeenCalledWith(
         req.user.id,
@@ -237,9 +237,9 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.deleteBoard).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 deleteBoard 메서드의 결과가 deleteBoardResult 같은지 확인
-      expect(response).toBe(deleteBoardResult);
+      expect(response).toEqual(deleteBoardResult);
       // 컨트롤러에서 서비스의 deleteBoard 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.deleteBoard).toHaveBeenCalledWith(req.user.id, req.params.boardId);
     });
@@ -263,13 +263,13 @@ describe('BoardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.createInvitation).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 createInvitation 메서드의 결과에 token이 있는지 확인
       expect(response).toHaveProperty('token');
       // 컨트롤러의 실제 createInvitation 메서드의 token이 문자열인지 확인
       expect(typeof response.token).toBe('string');
       // 컨트롤러의 실제 createInvitation 메서드의 결과가 createInvitationResult 같은지 확인
-      expect(response).toBe(createInvitationResult);
+      expect(response).toEqual(createInvitationResult);
       // 컨트롤러에서 서비스의 createInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.createInvitation).toHaveBeenCalledWith(
         req.user.id, // 사용자가 보드의 owner인지 확인하기 위한 용도
@@ -295,9 +295,9 @@ describe('BoardsController', () => {
 
       // THEN
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockBoardsService.acceptInvitation).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 acceptInvitation 메서드의 결과가 acceptInvitationResult 같은지 확인
-      expect(response).toBe(acceptInvitationResult);
+      expect(response).toEqual(acceptInvitationResult);
       // 컨트롤러에서 서비스의 acceptInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockBoardsService.acceptInvitation).toHaveBeenCalledWith(
         req.user.id, // 수락하는 사용자가 초대 받은 사용자가 맞는지 확인하는 용도

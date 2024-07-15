@@ -3,6 +3,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { GetCommentListDto } from './dto/get-comment-list.dto';
+import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 
 @Controller('comments')
 export class CommentsController {
@@ -27,12 +28,13 @@ export class CommentsController {
     @Body() updateCommentDto: UpdateCommentDto
   ) {
     await this.commentsService.updateComment(commentId, updateCommentDto);
-    return { statusCode: HttpStatus.CREATED, message: '댓글 수정에 성공했습니다.' };
+    return { statusCode: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.UPDATE };
   }
 
+  // 댓글 삭제
   @Delete(':commentId')
   async deleteComment(@Param('commentId') commentId: number) {
     await this.commentsService.deleteComment(commentId);
-    return { statusCode: HttpStatus.CREATED, message: '댓글 삭제에 성공했습니다.' };
+    return { statusCode: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.DELETE };
   }
 }
