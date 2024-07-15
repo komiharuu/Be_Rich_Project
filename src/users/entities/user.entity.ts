@@ -1,57 +1,72 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Board } from 'src/boards/entities/board.entity';
-import { Member } from 'src/boards/entities/member.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { List } from 'src/lists/entities/list.entity';
 import { Card } from 'src/cards/entities/card.entity';
+import { Board } from 'src/boards/entities/board.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { Member } from 'src/boards/entities/member.entity';
 
-@Entity('users')
+@Entity({
+  name: 'users',
+})
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @IsEmail()
+  @IsNotEmpty({ message: '이메일을 입력해 주세요.' })
+  @Column({ type: 'varchar', unique: true, nullable: false })
   email: string;
 
-  @Column()
+  @IsString()
+  @IsNotEmpty({ message: '닉네임을 입력해 주세요.' })
+  @Column({ type: 'varchar', unique: true, nullable: false })
   nickname: string;
 
-  @Column()
+  @IsString()
+  @IsNotEmpty({ message: '비밀번호를 입력해 주세요.' })
+  @Column({ type: 'varchar', select: false, nullable: false })
   password: string;
 
-  @Column({ name: 'profile_img', nullable: true })
+  @IsString()
+  @IsNotEmpty({ message: '프로필 이미지를 입력해 주세요.' })
+  @Column({ type: 'varchar', unique: true, nullable: true })
   profileImg: string;
 
-  @Column({ name: 'refresh_token', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   refreshToken: string;
 
-  @Column({ name: 'is_deleted', default: false })
+  @Column({ type: 'boolean', default: false })
   isDeleted: boolean;
 
-  @Column({ default: 'USER' }) 
-  role: string;
-
-  @Column({ default: 0 }) 
-  point: number;
-
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Board, (board) => board.user)
+  @OneToMany(() => Board, (boards) => boards.user)
   boards: Board[];
 
-  @OneToMany(() => Member, (member) => member.user)
+  @OneToMany(() => Member, (members) => members.user)
   members: Member[];
 
-  @OneToMany(() => List, (list) => list.user)
+  @OneToMany(() => List, (lists) => lists.user)
   lists: List[];
 
-  @OneToMany(() => Comment, (comments) => comments.user, {})
-  comments: Comment[];
-
-  @OneToMany(() => Card, (cards) => cards.user, {})
+  @OneToMany(() => Card, (cards) => cards.user)
   cards: Card[];
+
+  @OneToMany(() => Comment, (comments) => comments.user)
+  comments: Comment[];
 }
