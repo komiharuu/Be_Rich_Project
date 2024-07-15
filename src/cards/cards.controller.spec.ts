@@ -99,9 +99,9 @@ describe('CardsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockCardsService.createCard).toHaveBeenCalledTimes(1);
       // 실행 결과값과 임의의 반환값이 같은지 확인
-      expect(response).toBe(createCardResult);
+      expect(response).toEqual(createCardResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockCardsService.createCard).toHaveBeenCalledWith(req.user.id, createCardDto);
     });
@@ -133,10 +133,10 @@ describe('CardsController', () => {
       const response = await controller.getCardList(req, getCardListDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockCardsService.getCardList).toHaveBeenCalledTimes(1);
       // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
-      expect(response).toBe(getCardListResult);
+      expect(response).toEqual(getCardListResult);
       expect(mockCardsService.getCardList).toHaveBeenCalledWith(req.user.id, getCardListDto);
     });
 
@@ -173,8 +173,8 @@ describe('CardsController', () => {
       // THEN
       expect(response).toHaveBeenCalledTimes(1);
       // 결과값의 인스턴스가 배열인지 확인
-      expect(response).toBeInstanceOf(Array);
-      expect(response).toBe(getCardDetailResult);
+      expect(mockCardsService.getCardDetail).toBeInstanceOf(Array);
+      expect(response).toEqual(getCardDetailResult);
       expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.user.id, req.params.cardId);
     });
 
@@ -192,8 +192,8 @@ describe('CardsController', () => {
       const response = await controller.updateCard(req, req.params.cardId, updateCardDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(updateCardResult);
+      expect(mockCardsService.updateCard).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(updateCardResult);
       expect(mockCardsService.updateCard).toHaveBeenCalledWith(
         req.user.id,
         req.params.cardId,
@@ -215,8 +215,8 @@ describe('CardsController', () => {
       const response = await controller.deleteCard(req, req.params.cardId);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(deleteCardResult);
+      expect(mockCardsService.deleteCard).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(deleteCardResult);
       expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.user.id, req.params.cardId);
     });
   });

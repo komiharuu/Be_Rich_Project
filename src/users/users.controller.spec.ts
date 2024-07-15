@@ -76,7 +76,7 @@ describe('UsersController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockUsersService.getUserInfo).toHaveBeenCalledTimes(1);
       // email 프로퍼티가 있는지 확인
       expect(response).toHaveProperty('email');
       // nickname 프로퍼티가 있는지 확인
@@ -84,7 +84,7 @@ describe('UsersController', () => {
       // profileImg 프로퍼티가 있는지 확인
       expect(response).toHaveProperty('profileImg');
       // 실행 결과값과 임의의 반환값이 같은지 확인
-      expect(response).toBe(getUserInfoResult);
+      expect(response).toEqual(getUserInfoResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockUsersService.getUserInfo).toHaveBeenCalledWith(req.user.id);
     });
@@ -99,13 +99,14 @@ describe('UsersController', () => {
       };
       const req = { user: { id: 1 } };
 
-      // WHEN
       mockUsersService.updateUser.mockResolvedValue(updateUserResult);
 
-      // THEN
+      // WHEN
       const response = await controller.updateUser(req, updateUserDto);
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(updateUserResult);
+
+      // THEN
+      expect(mockUsersService.updateUser).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(updateUserResult);
       expect(mockUsersService.updateUser).toHaveBeenCalledWith(req.user.id, updateUserDto);
     });
   });
@@ -125,8 +126,8 @@ describe('UsersController', () => {
       const response = await controller.deleteUser(req);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(deleteUserResult);
+      expect(mockUsersService.deleteUser).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(deleteUserResult);
       expect(mockUsersService.deleteUser).toHaveBeenCalledWith(req.user.id);
     });
   });

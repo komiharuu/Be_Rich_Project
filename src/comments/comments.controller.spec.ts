@@ -81,9 +81,9 @@ describe('CommentsController', () => {
       // THEN
       // 테스트 진행하는 부분
       // 컨트롤러 메서드가 1번 실행되었는지 확인
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockCommentsService.createComment).toHaveBeenCalledTimes(1);
       // 실행 결과값과 임의의 반환값이 같은지 확인
-      expect(response).toBe(createCommentResult);
+      expect(response).toEqual(createCommentResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
       expect(mockCommentsService.createComment).toHaveBeenCalledWith(req.user.id, createCommentDto);
     });
@@ -113,10 +113,10 @@ describe('CommentsController', () => {
       const response = await controller.getCommentList(req, getCommentListDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
+      expect(mockCommentsService.getCommentList).toHaveBeenCalledTimes(1);
       // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
-      expect(response).toBe(getCommentListResult);
+      expect(response).toEqual(getCommentListResult);
       expect(mockCommentsService.getCommentList).toHaveBeenCalledWith(
         req.user.id,
         getCommentListDto
@@ -139,8 +139,8 @@ describe('CommentsController', () => {
       const response = await controller.updateComment(req, req.params.commentId, updateCommentDto);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(updateCommentResult);
+      expect(mockCommentsService.updateComment).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(updateCommentResult);
       expect(mockCommentsService.updateComment).toHaveBeenCalledWith(
         req.user.id,
         req.params.commentId,
@@ -164,8 +164,8 @@ describe('CommentsController', () => {
       const response = await controller.deleteComment(req, req.params.commentId);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      expect(response).toBe(deleteCommentResult);
+      expect(mockCommentsService.deleteComment).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(deleteCommentResult);
       expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(
         req.user.id,
         req.params.commentId
