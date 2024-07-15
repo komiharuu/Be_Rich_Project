@@ -11,7 +11,7 @@ import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>,
+    private commentRepository: Repository<Comment>
   ) {}
 
   // 댓글 생성 api
@@ -41,9 +41,11 @@ export class CommentsService {
     }
 
     // 댓글을 수정합니다.
-    const updateComment = await this.commentRepository.update(commentId, updateCommentDto);
+    this.commentRepository.update(commentId, updateCommentDto);
 
-    return updateComment;
+    await this.commentRepository.save(comment);
+
+    return comment;
   }
 
   // 댓글 삭제 api
