@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { GetCommentListDto } from './dto/get-comment-list.dto';
 
@@ -10,14 +10,13 @@ import { GetCommentListDto } from './dto/get-comment-list.dto';
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>
+    private commentRepository: Repository<Comment>,
   ) {}
 
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto) {
-    const { comment } = createCommentDto;
     const newComment = this.commentRepository.create(createCommentDto);
-    return newComment;
+    return this.commentRepository.save(newComment);
   }
 
   // 댓글 전체조회 api
@@ -42,7 +41,7 @@ export class CommentsService {
     // 댓글을 수정합니다.
     await this.commentRepository.update(commentId, updateCommentDto);
 
-    return comment;
+    return this.commentRepository.findOne({ where: { id: commentId } });
   }
 
   // 댓글 삭제 api
