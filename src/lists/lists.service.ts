@@ -34,10 +34,25 @@ export class ListService {
       throw new NotFoundException('보드를 찾을 수 없습니다.');
     }
 
+       // 모든 리스트를 가져옵니다.
+    const lists = await this.listRepository.find({ order: { position: 'ASC' } });
+
+    let newPosition: number;
+    if (lists.length === 0) {
+         // 테이블에 행이 없는 경우
+    newPosition = 1024;
+    } else {
+        // 테이블에 행이 하나 이상 있는 경우
+    const maxPosition = lists[lists.length - 1].position;
+    newPosition = maxPosition + 1024;
+    }
+
     const list = this.listRepository.create({
       title,
       user,
       board,
+      position: newPosition,
+
     });
 
     return this.listRepository.save(list);
@@ -69,7 +84,7 @@ export class ListService {
 
 
   async findAll(): Promise<List[]> {
-    return this.listRepository.find({ relations: ['user', 'board', 'cards'] });
+    return this.listRepository.find({ relations: ['user', 'board', 'cards'],  order: { position: 'ASC' } });
   }
 
 
@@ -98,9 +113,9 @@ export class ListService {
     await this.listRepository.save(list);
      
      // 포지션 겹침 방지
-    if (
-      Math.abs(newPosition - prevElPosition) <= 1 ||
-      Math.abs(newPosition - nextElPosition) <= 1
+     if (
+      (prevElPosition !== undefined && Math.abs(newPosition - prevElPosition) <= 1) ||
+      (nextElPosition !== undefined && Math.abs(newPosition - nextElPosition) <= 1)
     ) {
      // 모든 리스트를 포지션 오름차순으로 조회
       const lists = await this.listRepository.find({

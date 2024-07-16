@@ -5,8 +5,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateListDto } from './dto/create-list.dto';
 import { List } from './entities/list.entity';
 import { UpdateListPositionDto } from './dto/update-list.position.dto';
+import { BoardMemberGuard } from 'src/boards/board-member.guard';
 
-
+ 
+@UseGuards(AuthGuard('jwt'))
 @Controller('lists')
 export class ListsController {
   deleteList(req: { params: { listId: number; }; user: { id: number; }; }, listId: number) {
@@ -24,32 +26,30 @@ export class ListsController {
 
   constructor(private readonly listsService: ListService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+
   @Post()
   async create(@Body() createListDto: CreateListDto, @Req() req): Promise<List> {
     const userId = req.user.userId;
     return this.listsService.create(createListDto, userId);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+
   @Get()
   async findAll(): Promise<List[]> {
     return this.listsService.findAll();
   }
 
-  @UseGuards(AuthGuard('jwt'))
+ 
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
     return this.listsService.update(id, updateListDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async remove(@Param('id') id: number): Promise< {message:string} > {
     return this.listsService.delete(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch(':id/move')
   async updatePosition(
     @Param('id', ParseIntPipe) id: number,
