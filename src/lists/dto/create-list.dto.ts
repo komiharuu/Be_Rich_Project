@@ -6,11 +6,6 @@ export class CreateListDto {
   title: string;
 
   @IsInt()
-  @IsNotEmpty({ message: '포지션을 입력해주세요.' })
-  position: number;
-
-
-  @IsInt()
   @IsNotEmpty({ message: '보드 ID를 입력해주세요.' })
   boardId: number;
 }
