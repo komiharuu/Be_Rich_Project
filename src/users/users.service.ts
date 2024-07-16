@@ -45,7 +45,6 @@ export class UsersService {
   // 사용자 ID로 사용자 조회
   async getUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
-    console.log(user);
     if (user.isDeleted) {
       throw new BadRequestException('이미 탈퇴한 회원입니다.');
     }
@@ -86,17 +85,10 @@ export class UsersService {
 
   // 사용자 프로필 수정
   async updateUserProfile(updateUserProfileDto: UpdateUserProfileDto, id: number) {
-    const { email, nickname, profileImg } = updateUserProfileDto;
-    let existingUser: User;
-    if (!_.isNil(email)) {
-      existingUser = await this.getUserByEmail(email);
-      if (existingUser) {
-        throw new ConflictException('중복된 이메일입니다.');
-      }
-    }
+    const { nickname, profileImg } = updateUserProfileDto;
     if (!_.isNil(nickname)) {
-      existingUser = await this.getUserByNickname(nickname);
-      if (existingUser) {
+      const existingUser = await this.getUserByNickname(nickname);
+      if (existingUser && existingUser.id !== id) {
         throw new ConflictException('중복된 닉네임입니다.');
       }
     }
@@ -105,7 +97,6 @@ export class UsersService {
     if (user.isDeleted) {
       throw new BadRequestException('이미 탈퇴한 회원입니다.');
     }
-    user.email = email ?? user.email;
     user.nickname = nickname ?? user.nickname;
     user.profileImg = profileImg ?? user.profileImg;
 
