@@ -18,9 +18,15 @@ export class Member {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
+  @Column({ type: 'int', name: 'user_id', unsigned: true })
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.members)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @Column({ type: 'int', name: 'board_id', unsigned: true })
+  boardId: number;
 
   @ManyToOne(() => Board, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'board_id' })

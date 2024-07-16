@@ -7,6 +7,7 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { UsersService } from 'src/users/users.service';
 import { Board } from './entities/board.entity';
 import { User } from 'src/users/entities/user.entity';
+import { title } from 'process';
 
 @Injectable()
 export class BoardsService {
@@ -72,11 +73,14 @@ export class BoardsService {
     }
 
     // 데이터베이스에서 데이터 찾기
-    const boards = await this.boardRepository.find({
-      where: { user },
+    let boards = await this.boardRepository.find({
+      where: [{ ownerId: user.id }, { members: { userId: user.id } }],
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });
+
+    //삭제 되지 않은 보드 필터링
+    boards = boards.filter((board) => !board.isDeleted);
 
     // 조회된 데이터 캐시에 저장
     await this.cacheManager.set('boards', boards);
@@ -98,7 +102,10 @@ export class BoardsService {
   /* 보드 상세 조회 */
   async getBoardDetail(id: number, user: User) {
     // 보드 존재 여부 확인
-    const board = await this.boardRepository.findOne({ where: { id, user } });
+    const board = await this.boardRepository.findOne({
+      where: { id },
+      relations: ['user', 'members'],
+    });
 
     if (!board) {
       throw new NotFoundException('존재하지 않는 보드입니다.');
@@ -124,7 +131,10 @@ export class BoardsService {
     const { title, description, backgroundColor } = updateBoardDto;
 
     // 보드 존재 여부 확인
-    const board = await this.boardRepository.findOne({ where: { id, user } });
+    const board = await this.boardRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
 
     if (!board) {
       throw new NotFoundException('존재하지 않는 보드입니다.');
@@ -153,7 +163,7 @@ export class BoardsService {
   /* 보드 삭제 */
   async deleteBoard(id: number, user: User) {
     // 보드 존재 여부 확인
-    const board = await this.boardRepository.findOne({ where: { id, user } });
+    const board = await this.boardRepository.findOne({ where: { id }, relations: ['user'] });
 
     if (!board) {
       throw new NotFoundException('존재하지 않는 보드입니다.');
@@ -163,7 +173,7 @@ export class BoardsService {
     board.isDeleted = true;
 
     // 보드 삭제
-    await this.boardRepository.delete(board);
+    await this.boardRepository.save(board);
 
     return {
       status: HttpStatus.OK,
