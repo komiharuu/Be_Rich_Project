@@ -1,5 +1,13 @@
-
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Checklist } from './checklist.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { List } from 'src/lists/entities/list.entity';
@@ -10,11 +18,11 @@ export class Card {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column({ unsigned: true })
-  user_id: number;
+  @Column({ name: 'user_id' })
+  userId: number;
 
-  @Column({ unsigned: true })
-  list_id: number;
+  @Column({ name: 'list_id' })
+  listId: number;
 
   @Column({ unique: true, type: 'varchar' })
   title: string;
@@ -28,11 +36,11 @@ export class Card {
   @Column({ unsigned: true })
   position: number;
 
-  @Column({ unsigned: true })
-  assignment_id: number;
+  @Column({ unsigned: true, name: 'assignment_id' })
+  assignmentId: number;
 
-  @Column({ type: 'json', nullable: true })
-  collaborator_id: number[]; 
+  @Column({ type: 'json', nullable: true, name: 'collaborator_id' })
+  collaboratorId: number[];
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;
@@ -52,11 +60,13 @@ export class Card {
   @ManyToOne(() => User, (user) => user.cards, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => List, (list) => list.cards, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'list_id' })
   list: List;
 
   @OneToMany(() => Checklist, (checklists) => checklists.card, {})
