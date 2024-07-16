@@ -2,12 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { SignUpDto } from './dto/sign-up.dto';
-import { BadRequestException, ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { AUTH_TEST_CONSTANT, AUTH_TEST_DUMMY } from 'src/constants/Auth/auth-test.constant';
+import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
 
 // 모킹된 bcrypt의 메서드 정의
 jest.mock('bcrypt', () => ({
@@ -29,12 +30,7 @@ const mockUsersRepository = () => ({
 });
 
 // Sign Up DTO
-const signUpDto: SignUpDto = {
-  email: 'test12@test.com',
-  password: '123123',
-  passwordCheck: '123123',
-  nickname: 'Test12',
-};
+const signUpDto: any = AUTH_TEST_DUMMY[0];
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -81,12 +77,15 @@ describe('AuthService', () => {
 
     it('If not match password and passwordCheck', () => {
       // GIVEN
-      const invalidSignUpDto = { ...signUpDto, passwordCheck: 'different' };
+      const invalidSignUpDto = {
+        ...signUpDto,
+        passwordCheck: AUTH_TEST_CONSTANT.SIGN_UP.PASSWORD_CHECK,
+      };
       // WHEN
       const response = authService.signUp(invalidSignUpDto);
       // THEN
       expect(response).rejects.toThrow(BadRequestException);
-      expect(response).rejects.toThrow('비밀번호가 일치하지 않습니다.');
+      expect(response).rejects.toThrow(AUTH_MESSAGE_CONSTANT.SIGN_UP.NOT_MATCH_PASSWORD);
     });
 
     it('If email conflict', async () => {
@@ -96,7 +95,7 @@ describe('AuthService', () => {
       const response = authService.signUp(signUpDtoObject);
       // THEN
       expect(response).rejects.toThrow(ConflictException);
-      expect(response).rejects.toThrow('중복된 이메일입니다.');
+      expect(response).rejects.toThrow(AUTH_MESSAGE_CONSTANT.SIGN_UP.CONFLICT_EMAIL);
     });
 
     it('If nickname conflict', async () => {
@@ -107,19 +106,12 @@ describe('AuthService', () => {
       const response = authService.signUp(signUpDtoObject);
       // THEN
       expect(response).rejects.toThrow(ConflictException);
-      expect(response).rejects.toThrow('중복된 닉네임입니다.');
+      expect(response).rejects.toThrow(AUTH_MESSAGE_CONSTANT.SIGN_UP.CONFLICT_NICKNAME);
     });
 
     it('should create user', async () => {
       // GIVEN
-      const user = {
-        id: 1,
-        email: 'test12@test.com',
-        nickname: 'Test12',
-        profileImg: 'test_profile_image_url',
-        createdAt: '2024-07-05T23:08:07.001Z',
-        updatedAt: '2024-07-05T23:08:07.001Z',
-      };
+      const user = AUTH_TEST_DUMMY[1];
       mockUsersService.createUser.mockResolvedValue(user);
 
       jest
@@ -149,10 +141,7 @@ describe('AuthService', () => {
 
     it('should sign in', async () => {
       // GIVEN
-      const mockToken = {
-        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-      };
+      const mockToken = AUTH_TEST_DUMMY[2];
       jest.spyOn(jwtService, 'sign').mockImplementation((payload, options) => {
         if (options?.expiresIn) {
           return mockToken.accessToken;
@@ -166,7 +155,10 @@ describe('AuthService', () => {
 
       // THEN
       expect(jwtService.sign).toHaveBeenCalledTimes(2);
-      expect(jwtService.sign).toHaveBeenCalledWith({ id: userId }, { expiresIn: '12h' });
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        { id: userId },
+        { expiresIn: AUTH_TEST_CONSTANT.COMMON.TOKEN_EXPIRES_IN }
+      );
       expect(jwtService.sign).toHaveBeenCalledWith(
         { id: userId },
         { secret: process.env.REFRESH_SECRET_KEY }
@@ -197,14 +189,14 @@ describe('AuthService', () => {
 
       // THEN
       expect(response).rejects.toThrow(BadRequestException);
-      expect(response).rejects.toThrow('이미 로그아웃한 상태입니다.');
+      expect(response).rejects.toThrow(AUTH_MESSAGE_CONSTANT.SIGN_OUT.ALREADY);
     });
 
     it('should sign out', async () => {
       // GIVEN
       const signOutResult = {
-        status: 201,
-        message: '로그아웃에 성공했습니다.',
+        status: HttpStatus.OK,
+        message: AUTH_MESSAGE_CONSTANT.SIGN_OUT.SUCCEED,
       };
       mockUsersService.getUserById.mockResolvedValue(signOutResult);
 
@@ -225,10 +217,7 @@ describe('AuthService', () => {
     });
     it('should reissue', async () => {
       // GIVEN
-      const mockToken = {
-        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-      };
+      const mockToken = AUTH_TEST_DUMMY[2];
       jest.spyOn(jwtService, 'sign').mockImplementation((payload, options) => {
         if (options?.expiresIn) {
           return mockToken.accessToken;
@@ -242,7 +231,10 @@ describe('AuthService', () => {
 
       // THEN
       expect(jwtService.sign).toHaveBeenCalledTimes(2);
-      expect(jwtService.sign).toHaveBeenCalledWith({ id: userId }, { expiresIn: '12h' });
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        { id: userId },
+        { expiresIn: AUTH_TEST_CONSTANT.COMMON.TOKEN_EXPIRES_IN }
+      );
       expect(jwtService.sign).toHaveBeenCalledWith(
         { id: userId },
         { secret: process.env.REFRESH_SECRET_KEY }

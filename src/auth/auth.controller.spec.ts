@@ -5,7 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { SignUpDto } from './dto/sign-up.dto';
+import { AUTH_TEST_CONSTANT, AUTH_TEST_DUMMY } from 'src/constants/Auth/auth-test.constant';
+import { HttpStatus } from '@nestjs/common';
+import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
 
 // AuthService Mocking
 const mockAuthService = {
@@ -21,12 +23,7 @@ const mockRepository = () => ({
 
 // Auth sign-up DTO
 // 가짜 값 설정
-const signUpDto: SignUpDto = {
-  email: 'test@test.com',
-  password: '123123',
-  passwordCheck: '123123',
-  nickname: 'Test',
-};
+const signUpDto: any = AUTH_TEST_DUMMY[0];
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -71,14 +68,7 @@ describe('AuthController', () => {
     it('should sign up', async () => {
       // GIVEN
       // 필요한 설정을 하는 부분
-      const signUpResult = {
-        id: 1,
-        email: 'test@test.com',
-        nickname: 'Test',
-        profileImg: 'test_profile_image_url',
-        createdAt: '2024-07-05T23:08:07.001Z',
-        updatedAt: '2024-07-05T23:08:07.001Z',
-      };
+      const signUpResult = AUTH_TEST_DUMMY[1];
 
       // 모킹된 서비스의 signUp메서드를 실행하면 signUpResult 값을 반환한다는 의미
       mockAuthService.signUp.mockResolvedValue(signUpResult);
@@ -93,11 +83,11 @@ describe('AuthController', () => {
       // 컨트롤러 메서드가 1번 실행되었는지 확인
       expect(mockAuthService.signUp).toHaveBeenCalledTimes(1);
       // email 프로퍼티가 있는지 확인
-      expect(response).toHaveProperty('email');
+      expect(response).toHaveProperty(AUTH_TEST_CONSTANT.COMMON.EMAIL);
       // nickname 프로퍼티가 있는지 확인
-      expect(response).toHaveProperty('nickname');
+      expect(response).toHaveProperty(AUTH_TEST_CONSTANT.COMMON.NICKNAME);
       // profileImg 프로퍼티가 있는지 확인
-      expect(response).toHaveProperty('profileImg');
+      expect(response).toHaveProperty(AUTH_TEST_CONSTANT.COMMON.PROFILE_IMG);
       // 컨트롤러의 실제 signUp 메서드의 결과가 signUpResult와 같은지 확인
       expect(response).toEqual(signUpResult);
       // 컨트롤러에서 서비스의 sinUp 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -108,10 +98,7 @@ describe('AuthController', () => {
   describe('signIn', () => {
     it('should return tokens', async () => {
       // GIVEN
-      const signInResult = {
-        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-      };
+      const signInResult = AUTH_TEST_DUMMY[2];
       const req = { user: { id: 1 } };
 
       // 모킹된 서비스의 signIn메서드를 실행하면 signInResult 값을 반환한다는 의미
@@ -127,13 +114,13 @@ describe('AuthController', () => {
       // 컨트롤러 메서드가 1번 실행되었는지 확인
       expect(mockAuthService.signIn).toHaveBeenCalledTimes(1);
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
-      expect(response).toHaveProperty('accessToken');
+      expect(response).toHaveProperty(AUTH_TEST_CONSTANT.COMMON.ACCESS_TOKEN);
       // 컨트롤러의 실제 signIn 메서드의 결과에 accessToken이 있는지 확인
-      expect(response).toHaveProperty('refreshToken');
+      expect(response).toHaveProperty(AUTH_TEST_CONSTANT.COMMON.REFRESH_TOKEN);
       // 컨트롤러의 실제 signIn 메서드의 accessToken이 문자열인지 확인
-      expect(typeof response.accessToken).toBe('string');
+      expect(typeof response.accessToken).toBe(AUTH_TEST_CONSTANT.COMMON.STRING_TYPE);
       // 컨트롤러의 실제 signIn 메서드의 refreshToken이 문자열인지 확인
-      expect(typeof response.refreshToken).toBe('string');
+      expect(typeof response.refreshToken).toBe(AUTH_TEST_CONSTANT.COMMON.STRING_TYPE);
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(signInResult);
       // 컨트롤러에서 서비스의 signIn 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
@@ -145,8 +132,8 @@ describe('AuthController', () => {
     it('should sign-out', async () => {
       // GIVEN
       const signOutResult = {
-        status: 201,
-        message: '로그아웃에 성공했습니다.',
+        status: HttpStatus.OK,
+        message: AUTH_MESSAGE_CONSTANT.SIGN_OUT.SUCCEED,
       };
       const req = { user: { id: 1 } };
 
@@ -165,10 +152,7 @@ describe('AuthController', () => {
   describe('reissue', () => {
     it('should reissue', async () => {
       // GIVEN
-      const reissueResult = {
-        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-      };
+      const reissueResult = AUTH_TEST_DUMMY[2];
       const req = { user: { id: 1 } };
 
       mockAuthService.reissue.mockResolvedValue(reissueResult);
