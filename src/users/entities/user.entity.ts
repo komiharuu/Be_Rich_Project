@@ -20,7 +20,7 @@ import { Member } from 'src/boards/entities/member.entity';
   name: 'users',
 })
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({unsigned: true})
   id: number;
 
   @IsEmail()
