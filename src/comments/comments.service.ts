@@ -16,15 +16,15 @@ export class CommentsService {
 
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto) {
-    const { comment, cardId: card_id } = createCommentDto;
+    const { comment, card_id } = createCommentDto;
     const newComment = this.commentRepository.save({ comment, card_id });
     return newComment;
   }
 
   // 댓글 전체조회 api
   async getCommentList(getCommentListDto: GetCommentListDto) {
-    const { cardId: card_id } = getCommentListDto;
-    const comments = await this.commentRepository.find({ where: { card_id } });
+    const { cardId } = getCommentListDto;
+    const comments = await this.commentRepository.find({ where: { cardId } });
     if (!comments) {
       throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.CARD_COMMENT);
     }

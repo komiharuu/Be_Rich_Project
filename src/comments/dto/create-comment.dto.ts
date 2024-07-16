@@ -6,7 +6,7 @@ export class CreateCommentDto {
   @Type(() => Number)
   @IsNumber()
   @IsNotEmpty({ message: COMMENTMESSAGE.COMMON.CARDID.REQUIRED })
-  cardId: number;
+  card_id: number;
 
   @IsString()
   @IsNotEmpty({ message: COMMENTMESSAGE.COMMON.COMMENT.REQUIRED })
