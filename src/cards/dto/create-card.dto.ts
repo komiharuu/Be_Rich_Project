@@ -1,18 +1,19 @@
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CARDMESSAGE } from 'src/constants/card-message.constant';
 
 export class CreateCardDto {
   @Type(() => Number)
   @IsNumber()
-  @IsNotEmpty({ message: '리스트 id를 입력해주세요.' })
+  @IsNotEmpty({ message: CARDMESSAGE.COMMON.LISTID.REQUIRED })
   listId: number;
 
   @IsString()
-  @IsNotEmpty({ message: '이름을 입력해주세요.' })
+  @IsNotEmpty({ message: CARDMESSAGE.COMMON.NAME.REQUIRED })
   name: string;
 
   @IsString()
-  @IsNotEmpty({ message: '내용을 입력해주세요.' })
+  @IsNotEmpty({ message: CARDMESSAGE.COMMON.DESCRIPTION.REQUIRED })
   description: string;
 
   // @Type(() => Number)

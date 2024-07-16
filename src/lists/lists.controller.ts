@@ -1,9 +1,10 @@
 import { ListService } from './lists.service';
 import { UpdateListDto } from './dto/update-list.dto';
-import { Body, Controller, Post, UseGuards, Request, Get, Param, Patch, Delete, Req } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, Get, Param, Patch, Delete, Req, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateListDto } from './dto/create-list.dto';
 import { List } from './entities/list.entity';
+import { UpdateListPositionDto } from './dto/update-list.position.dto';
 
 
 @Controller('lists')
@@ -30,7 +31,7 @@ export class ListsController {
     return this.listsService.create(createListDto, userId);
   }
 
-
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(): Promise<List[]> {
     return this.listsService.findAll();
@@ -44,8 +45,16 @@ export class ListsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<void> {
+  async remove(@Param('id') id: number): Promise< {message:string} > {
     return this.listsService.delete(id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id/move')
+  async updatePosition(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateListPositionDto: UpdateListPositionDto,
+  ): Promise<List> {
+    return this.listsService.updatePosition(id, updateListPositionDto);
+  }
 }

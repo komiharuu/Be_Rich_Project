@@ -55,7 +55,7 @@ export class ListService {
     return this.listRepository.save(list);
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: number): Promise<{ message:string }> {
     const list = await this.listRepository.findOne({ where: { id } });
 
     if (!list) {
@@ -63,6 +63,8 @@ export class ListService {
     }
 
     await this.listRepository.remove(list);
+
+    return { message: '삭제가 완료 되었습니다.'}
   }
 
 

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
 import { GetCardListDto } from './dto/get-card-list.dto';
 import { User } from 'src/users/entities/user.entity';
+import { CARDMESSAGE } from 'src/constants/card-message.constant';
 
 @Injectable()
 export class CardsService {
@@ -59,7 +60,7 @@ export class CardsService {
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
 
     if (!card) {
-      throw new NotFoundException(`카드를 찾을 수 없습니다.`);
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
 
     // 댓글을 수정합니다.
@@ -79,10 +80,8 @@ export class CardsService {
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
 
     if (!card) {
-      throw new NotFoundException(`카드를 찾을 수 없습니다.`);
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
+      await this.cardRepository.delete(cardId);
     }
-
-    // 카드를 삭제합니다
-    await this.cardRepository.delete(cardId);
   }
 }

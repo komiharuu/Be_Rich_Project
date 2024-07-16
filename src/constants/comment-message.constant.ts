@@ -6,6 +6,7 @@ export const COMMENTMESSAGE = {
     },
     COMMENT: {
       REQUIRED: '댓글 내용을 입력해주세요.',
+      UPDATED: '수정할 카드 내용을 입력해주세요',
     },
     CARDID: {
       REQUIRED: '카드 id를 입력해주세요.',
