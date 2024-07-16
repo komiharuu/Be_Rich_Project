@@ -19,7 +19,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
 import { BoardMemberGuard } from './board-member.guard';
 import { BoardOwnerGuard } from './board-owner.guard';
-import { CreateInvitationDto } from './dto/create-invitation.dto';
 
 @ApiTags('보드')
 @Controller('boards')
@@ -83,20 +82,5 @@ export class BoardsController {
   deleteBoard(@Param('boardId') id: number, @Req() req: any) {
     const user: User = req.user;
     return this.boardsService.deleteBoard(+id, user);
-  }
-
-  /**
-   * 보드 초대
-   */
-  @UseGuards(AuthGuard('jwt'), BoardOwnerGuard)
-  @HttpCode(HttpStatus.OK)
-  @Post(':boardId/invite')
-  createInvitation(
-    @Param('boardId') id: number,
-    @Body() inviteDto: CreateInvitationDto,
-    @Req() req: any
-  ) {
-    const user: User = req.user;
-    return this.boardsService.createInvitation(+id, inviteDto, user);
   }
 }
