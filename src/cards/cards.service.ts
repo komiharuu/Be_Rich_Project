@@ -17,11 +17,22 @@ export class CardsService {
 
   // 카드 생성
   async createCard(createCardDto: CreateCardDto, user: User) {
-    const { listId, title, description } = createCardDto;
+    const { listId, title, description, position } = createCardDto;
+
+    let newPosition;
+    if (!position) {
+      newPosition = 1024;
+    } else {
+      const maxPosition = await this.cardRepository.query(
+        `SELECT MAX(position) as max FROM cards WHERE list_id = ${listId}`
+      );
+      newPosition = (maxPosition[0].max || 0) + 1024;
+    }
     const newCard = await this.cardRepository.save({
       user: { id: user.id },
       list: { id: listId },
       title,
+      newPosition,
       description,
     });
 
@@ -131,10 +142,11 @@ export class CardsService {
             .execute();
         })
       );
-
-      return cards;
-
       await this.cardRepository.save(cards);
+      return cards;
     }
   }
+
+  // // 할당자 추가
+  // async addCollaborator();
 }

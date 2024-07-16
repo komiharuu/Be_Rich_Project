@@ -15,11 +15,11 @@ export class Comment {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column({ unsigned: true })
-  user_id: number;
+  @Column({ type: 'int', name: 'user_id', unsigned: true })
+  userId: number;
 
-  @Column({ unsigned: true })
-  card_id: number;
+  @Column({ type: 'int', name: 'card_id', unsigned: true })
+  cardId: number;
 
   @Column({ type: 'text' })
   comment: string;
@@ -36,12 +36,12 @@ export class Comment {
   @ManyToOne(() => User, (user) => user.comments, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Card, (card) => card.comments, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'card_id' })
   card: Card;
 }

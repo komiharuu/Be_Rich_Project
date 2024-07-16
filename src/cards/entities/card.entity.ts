@@ -18,10 +18,10 @@ export class Card {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column({ name: 'user_id' })
+  @Column({ unsigned: true, name: 'user_id' })
   userId: number;
 
-  @Column({ name: 'list_id' })
+  @Column({ unsigned: true, name: 'list_id' })
   listId: number;
 
   @Column({ unique: true, type: 'varchar' })
@@ -40,7 +40,7 @@ export class Card {
   assignmentId: number;
 
   @Column({ type: 'json', nullable: true, name: 'collaborator_id' })
-  collaboratorId: number[];
+  collaboratorId: number;
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;

@@ -25,7 +25,7 @@ export class UpdateCardDto extends PartialType(CreateCardDto) {
 
   @Type(() => Number)
   @IsNumber()
-  collaborator_id: number[];
+  collaborator_id: number;
 
   startdate: Date;
 
