@@ -1,38 +1,44 @@
-import { ConflictException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { UsersService } from 'src/users/users.service'; 
+import { UsersService } from 'src/users/users.service';
 import { Board } from './entities/board.entity';
 import { User } from 'src/users/entities/user.entity';
+import { v4 as uuid4 } from 'uuid';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class BoardsService {
+  userRepository: any;
   constructor(
     @InjectRepository(Board) private boardRepository: Repository<Board>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly redisService: RedisService
   ) {}
 
   /* 보드 생성 */
   async createBoard(createBoardDto: CreateBoardDto, userId: number) {
     const { title, description, backgroundColor } = createBoardDto;
 
-    const existingTitle = await this.boardRepository.findOne({ where: { title } });
-
-    if (existingTitle) {
-      throw new ConflictException('이미 등록된 보드 입니다.');
-    }
-
     // 사용자 정보 가져오기 (UsersService 이용)
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.getUserById(userId);
 
     if (!user) {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
 
+    //새로운 보드 생성
     const newBoard = this.boardRepository.create({
       title,
       description,
@@ -56,12 +62,13 @@ export class BoardsService {
     };
   }
 
+  /* 보드 목록 조회 */
   async getBoardList(user: User) {
     // 캐싱 된 데이터 찾기
     const cachedBoards = await this.cacheManager.get<Board[]>('boards');
     // 캐싱 된 데이터가 있다면, 데이터 가져오기
     if (cachedBoards) {
-      const cachedBoardList = cachedBoards.map(board => ({
+      const cachedBoardList = cachedBoards.map((board) => ({
         id: board.id,
         ownerId: board.user.id,
         title: board.title,
@@ -85,7 +92,7 @@ export class BoardsService {
     // 조회된 데이터 캐시에 저장
     await this.cacheManager.set('boards', boards);
 
-    const boardList = boards.map(board => ({
+    const boardList = boards.map((board) => ({
       id: board.id,
       ownerId: board.user.id,
       title: board.title,
@@ -99,7 +106,9 @@ export class BoardsService {
     };
   }
 
+  /* 보드 상세 조회 */
   async getBoardDetail(id: number, user: User) {
+    // 보드 존재 여부 확인
     const board = await this.boardRepository.findOne({ where: { id, user } });
 
     if (!board) {
@@ -157,6 +166,10 @@ export class BoardsService {
     // 보드 존재 여부 확인
     const board = await this.boardRepository.findOne({ where: { id, user } });
 
+    if (!board) {
+      throw new NotFoundException('존재하지 않는 보드입니다.');
+    }
+
     // isDeleted 값 업데이트
     board.isDeleted = true;
 
@@ -169,5 +182,64 @@ export class BoardsService {
     };
   }
 
-  //보드 초대 - 로드메일러
+  /* 보드 초대 */
+  async createInvitation(id: number, inviteDto, user: User) {
+    // 보드 존재 여부 확인
+    const board = await this.boardRepository.findOne({ where: { id, user } });
+
+    if (!board) {
+      throw new NotFoundException('존재하지 않는 보드입니다.');
+    }
+
+    //보드 멤버로 등록할 사용자 찾기
+    const member = await this.usersRepository.findOne({ where: { email: inviteDto.email } });
+
+    if (!member) {
+      throw new NotFoundException('초대하려는 사용자를 찾을 수 없습니다.');
+    }
+
+    //이미 보드 멤버인지 확인
+    const isMember = await this.boardRepository
+      .createQueryBuilder('board')
+      .leftJoin('board.members', 'member')
+      .where('board.id = :boardId', { boardId: id })
+      .andWhere('member.id = :userId', { userId: member.id })
+      .getOne();
+
+    if (isMember) {
+      throw new ConflictException('해당 사용자는 이미 보드 멤버입니다.');
+    }
+
+    //인증 토큰 생성
+    const token = uuid4();
+
+    //레디스에 인증 토큰 저장
+    await this.redisService.set(token, { id, user }, { ttl: 3600 });
+
+    //이메일 전송
+    await this.redisService.sendEmail(
+      inviteDto.email,
+      '트렐로 서비스 초대 발송',
+      `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Board Invitation</title>
+        </head>
+        <body>
+            <p>안녕하세요, ${board.title}에 초대받으셨습니다.</p>
+            <p>${board.user.nickname}님께서 보낸 초대 이메일입니다.</p>
+            <p>아래 링크를 클릭하여 보드에 가입하세요.</p>
+            <a href="http://localhost:3000/accept-invitation?token=${token}">초대 수락하기</a>
+        </body>
+        </html>
+      `
+    );
+
+    return {
+      status: HttpStatus.OK,
+    };
+  }
 }
