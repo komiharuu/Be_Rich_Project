@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
-import { GetCardListDto } from './dto/get-card-list.dto';
 import { User } from 'src/users/entities/user.entity';
 import { CARDMESSAGE } from 'src/constants/card-message.constant';
+import { MoveCardDto } from './dto/move-card.dto';
 
 @Injectable()
 export class CardsService {
@@ -16,29 +16,34 @@ export class CardsService {
   ) {}
 
   // 카드 생성
-  async createCard(createCardDto: CreateCardDto) {
-    const { listId, name, description } = createCardDto;
+  async createCard(createCardDto: CreateCardDto, user: User) {
+    const { listId, title, description } = createCardDto;
     const newCard = await this.cardRepository.save({
-      list_id: listId,
-      name,
+      user: { id: user.id },
+      list: { id: listId },
+      title,
       description,
     });
+
+    // position이 카드 테이블에 데이터가 아무것도 없으면 1024, 있으면 그중에 제일 큰 값에다가 +1024가 되어야한다.
+
     return newCard;
   }
 
-  // 카드 리스트 조회
-  async getCardList(getCardListDto: GetCardListDto): Promise<Card[]> {
-    const { listId: list_id, assignment_id, collaboratior_id } = getCardListDto;
+  // // 카드 리스트 조회
+  async getCardList(): Promise<any[]> {
+    const cards = await this.cardRepository.find();
 
-    const card = await this.cardRepository.find({ where: { list_id } });
-
-    const cards = card.map((card) => ({
-      ...card,
-      assignorId: assignment_id,
-      assigneeId: collaboratior_id,
+    // 각 카드에 추가 정보 할당
+    const updatedCards = cards.map((card) => ({
+      cardId: card.id,
+      listId: card.listId,
+      title: card.title,
+      createdAt: card.created_at,
+      updatedAt: card.updated_at,
     }));
 
-    return cards;
+    return updatedCards;
   }
 
   // 카드 상세조회
@@ -81,7 +86,55 @@ export class CardsService {
 
     if (!card) {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
-      await this.cardRepository.delete(cardId);
+    }
+    await this.cardRepository.delete(cardId);
+  }
+
+  async moveCard(cardId: number, moveCardDto: MoveCardDto) {
+    const id = cardId;
+    let { prevElIndexNumber, nextElIndexNumber, position } = moveCardDto;
+
+    if (prevElIndexNumber === undefined) {
+      position = nextElIndexNumber - 512;
+    } else if (nextElIndexNumber === undefined) {
+      position = prevElIndexNumber + 512;
+    } else {
+      position = Math.floor((prevElIndexNumber + nextElIndexNumber) / 2);
+    }
+
+    // 카드 위치 업데이트
+
+    if (
+      Math.abs(position - prevElIndexNumber) <= 1 ||
+      Math.abs(position - nextElIndexNumber) <= 1
+    ) {
+      await this.cardRepository
+        .createQueryBuilder()
+        .update(Card)
+        .set({ position })
+        .where({ id: cardId })
+        .execute();
+
+      const cards = await this.cardRepository
+        .createQueryBuilder('card')
+        .orderBy('card.position', 'ASC')
+        .getMany();
+
+      // 모든 카드의 위치를 새로 계산하여 업데이트
+      await Promise.all(
+        cards.map(async (card, index) => {
+          await this.cardRepository
+            .createQueryBuilder()
+            .update(card)
+            .set({ position: (index + 1) * 1024 })
+            .where({ id: cardId })
+            .execute();
+        })
+      );
+
+      return cards;
+
+      await this.cardRepository.save(cards);
     }
   }
 }

@@ -10,7 +10,7 @@ export class CreateCardDto {
 
   @IsString()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.NAME.REQUIRED })
-  name: string;
+  title: string;
 
   @IsString()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.DESCRIPTION.REQUIRED })

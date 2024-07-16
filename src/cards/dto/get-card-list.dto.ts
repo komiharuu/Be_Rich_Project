@@ -1,11 +1,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GetCardListDto {
-  listId: number;
-
-  name: string;
+  title: string;
 
   description: string;
+  list_id: number;
 
   // @Type(() => Number)
   // @IsNumber()
