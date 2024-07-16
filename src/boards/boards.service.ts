@@ -27,7 +27,7 @@ export class BoardsService {
     }
 
     // 사용자 정보 가져오기 (UsersService 이용)
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.getUserById(userId);
 
     if (!user) {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');
