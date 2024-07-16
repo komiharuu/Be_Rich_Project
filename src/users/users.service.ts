@@ -45,6 +45,7 @@ export class UsersService {
   // 사용자 ID로 사용자 조회
   async getUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
+    console.log(user);
     if (user.isDeleted) {
       throw new BadRequestException('이미 탈퇴한 회원입니다.');
     }

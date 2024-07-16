@@ -9,12 +9,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('lists')
 export class List {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({unsigned: true })
   id: number;
+
+  @Column({ type: 'int', name: 'user_id', unsigned: true })
+  userId: number;
+ 
+  @Column({ type: 'int', name: 'board_id', unsigned: true })
+  boardId: number;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
   title: string;
@@ -37,11 +44,13 @@ export class List {
   @ManyToOne(() => User, (user) => user.lists, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({name: 'user_id'})
   user: User;
 
   @ManyToOne(() => Board, (board) => board.list, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn({name: 'board_id'})
   board: Board;
   
 }
