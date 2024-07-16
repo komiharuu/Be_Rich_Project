@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entities/user.entity';
+import { SignUpDto } from './dto/sign-up.dto';
 
 // AuthService Mocking
 const mockAuthService = {
@@ -10,32 +15,17 @@ const mockAuthService = {
   reissue: jest.fn(),
 };
 
+const mockRepository = () => ({
+  find: jest.fn(),
+});
+
 // Auth sign-up DTO
-interface IUserSignUp {
-  email: string;
-  password: string;
-  passwordCheck: string;
-  nickname: string;
-  profile: string;
-}
 // 가짜 값 설정
-const signUpDto: IUserSignUp = {
+const signUpDto: SignUpDto = {
   email: 'test@test.com',
   password: '123123',
   passwordCheck: '123123',
   nickname: 'Test',
-  profile: 'test_profile_image_url',
-};
-
-// Auth sign-in DTO
-interface IUserSignIn {
-  email: string;
-  password: string;
-}
-// 가짜 값 설정
-const signInDto: IUserSignIn = {
-  email: 'test@test.com',
-  password: '123123',
 };
 
 describe('AuthController', () => {
@@ -51,7 +41,12 @@ describe('AuthController', () => {
     // 가짜 모듈 생성
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: mockAuthService }],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        JwtService,
+        UsersService,
+        { provide: getRepositoryToken(User), useValue: mockRepository() },
+      ],
     }).compile();
 
     // 만들어진 가짜 모듈에서의 service와 controller를 가져옴
@@ -80,7 +75,7 @@ describe('AuthController', () => {
         id: 1,
         email: 'test@test.com',
         nickname: 'Test',
-        profile: 'test_profile_image_url',
+        profileImg: 'test_profile_image_url',
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
@@ -125,7 +120,7 @@ describe('AuthController', () => {
       // WHEN
       // 실제로 컨트롤러의 메서드를 동작시키는 부분
       // 컨트롤러 메서드의 매개변수로 signInDto를 사용
-      const response = await controller.signIn(signInDto);
+      const response = await controller.signIn(req);
 
       // THEN
       // 테스트 진행하는 부분
@@ -142,7 +137,49 @@ describe('AuthController', () => {
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(signInResult);
       // 컨트롤러에서 서비스의 signIn 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockAuthService.signIn).toHaveBeenCalledWith(signInDto);
+      expect(mockAuthService.signIn).toHaveBeenCalledWith(req.user.id);
+    });
+  });
+
+  describe('signOut', () => {
+    it('should sign-out', async () => {
+      // GIVEN
+      const signOutResult = {
+        status: 201,
+        message: '로그아웃에 성공했습니다.',
+      };
+      const req = { user: { id: 1 } };
+
+      mockAuthService.signOut.mockResolvedValue(signOutResult);
+
+      // WHEN
+      const response = await controller.signOut(req);
+
+      // THEN
+      expect(mockAuthService.signOut).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(signOutResult);
+      expect(mockAuthService.signOut).toHaveBeenCalledWith(req.user.id);
+    });
+  });
+
+  describe('reissue', () => {
+    it('should reissue', async () => {
+      // GIVEN
+      const reissueResult = {
+        accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      };
+      const req = { user: { id: 1 } };
+
+      mockAuthService.reissue.mockResolvedValue(reissueResult);
+
+      // WHEN
+      const response = await controller.reissue(req);
+
+      // THEN
+      expect(mockAuthService.reissue).toHaveBeenCalledTimes(1);
+      expect(response).toEqual(reissueResult);
+      expect(mockAuthService.reissue).toHaveBeenCalledWith(req.user.id);
     });
   });
 });

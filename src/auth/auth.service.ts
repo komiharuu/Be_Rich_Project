@@ -28,6 +28,7 @@ export class AuthService {
 
     // 이메일 중복 체크
     let existedUser = await this.usersService.getUserByEmail(email);
+    console.log(existedUser);
     if (existedUser) {
       throw new ConflictException('중복된 이메일입니다.');
     }
@@ -94,7 +95,10 @@ export class AuthService {
     // Refresh Token 삭제 (soft delete)
     await this.usersService.deleteRefreshToken(userId);
 
-    return { message: '로그아웃에 성공했습니다.' };
+    return {
+      status: 201,
+      message: '로그아웃에 성공했습니다.',
+    };
   }
 
   // 토큰 재발급
