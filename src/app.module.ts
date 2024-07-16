@@ -10,6 +10,7 @@ import { CommentsModule } from './comments/comments.module';
 import { configModuleValidationSchema } from './configs/env-validation.config';
 import { typeOrmModuleOptions } from './configs/database.config';
 import { EmailModule } from './boards/meilers/email.module';
+import { InvitationsModule } from './invites/invitations.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EmailModule } from './boards/meilers/email.module';
     CardsModule,
     CommentsModule,
     EmailModule,
+    InvitationsModule,
   ],
 })
 export class AppModule implements NestModule {
