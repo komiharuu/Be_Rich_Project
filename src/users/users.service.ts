@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import _ from 'lodash';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { USERS_MESSAGE_CONSTANT } from 'src/constants/Users/users-message.constant';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +32,7 @@ export class UsersService {
   async getUserProfile(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (user.isDeleted) {
-      throw new BadRequestException('이미 탈퇴한 회원입니다.');
+      throw new BadRequestException(USERS_MESSAGE_CONSTANT.COMMON.IS_DELETED_USER);
     }
     return {
       id: user.id,
@@ -46,7 +48,7 @@ export class UsersService {
   async getUserById(id: number) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (user.isDeleted) {
-      throw new BadRequestException('이미 탈퇴한 회원입니다.');
+      throw new BadRequestException(USERS_MESSAGE_CONSTANT.COMMON.IS_DELETED_USER);
     }
     return user;
   }
@@ -89,25 +91,31 @@ export class UsersService {
     if (!_.isNil(nickname)) {
       const existingUser = await this.getUserByNickname(nickname);
       if (existingUser && existingUser.id !== id) {
-        throw new ConflictException('중복된 닉네임입니다.');
+        throw new ConflictException(USERS_MESSAGE_CONSTANT.UPDATE_USER.CONFLICT_EMAIL);
       }
     }
 
     const user = await this.usersRepository.findOne({ where: { id } });
     if (user.isDeleted) {
-      throw new BadRequestException('이미 탈퇴한 회원입니다.');
+      throw new BadRequestException(USERS_MESSAGE_CONSTANT.COMMON.IS_DELETED_USER);
     }
     user.nickname = nickname ?? user.nickname;
     user.profileImg = profileImg ?? user.profileImg;
 
     await this.usersRepository.save(user);
 
-    return { message: '사용자 프로필 수정에 성공했습니다.' };
+    return {
+      status: HttpStatus.OK,
+      message: USERS_MESSAGE_CONSTANT.UPDATE_USER.SUCCEED,
+    };
   }
 
   // 사용자 회원 탈퇴 (soft delete)
   async deleteUserProfile(id: number) {
     await this.usersRepository.update({ id }, { refreshToken: null, isDeleted: true });
-    return { message: '회원 탈퇴에 성공했습니다.' };
+    return {
+      status: HttpStatus.OK,
+      message: USERS_MESSAGE_CONSTANT.DELETE_USER.SUCCEED,
+    };
   }
 }

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -10,6 +11,8 @@ import { compare, hash } from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import _ from 'lodash';
+import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
+import { AUTH_CONSTANT } from 'src/constants/Auth/auth.constant';
 
 @Injectable()
 export class AuthService {
@@ -23,24 +26,24 @@ export class AuthService {
     const { email, password, passwordCheck, nickname } = signUpDto;
 
     if (password !== passwordCheck) {
-      throw new BadRequestException('비밀번호가 일치하지 않습니다.');
+      throw new BadRequestException(AUTH_MESSAGE_CONSTANT.SIGN_UP.NOT_MATCH_PASSWORD);
     }
 
     // 이메일 중복 체크
     let existedUser = await this.usersService.getUserByEmail(email);
     console.log(existedUser);
     if (existedUser) {
-      throw new ConflictException('중복된 이메일입니다.');
+      throw new ConflictException(AUTH_MESSAGE_CONSTANT.SIGN_UP.CONFLICT_EMAIL);
     }
 
     // 닉네임 중복 체크
     existedUser = await this.usersService.getUserByNickname(nickname);
     if (existedUser) {
-      throw new ConflictException('중복된 닉네임입니다.');
+      throw new ConflictException(AUTH_MESSAGE_CONSTANT.SIGN_UP.CONFLICT_NICKNAME);
     }
 
     // 비밀번호 암호화
-    const hashedPassword = await hash(password, 10);
+    const hashedPassword = await hash(password, AUTH_CONSTANT.COMMON.HASH_SALT);
 
     // 사용자 데이터베이스에 저장
     const user = await this.usersService.createUser(email, hashedPassword, nickname);
@@ -55,13 +58,13 @@ export class AuthService {
     // 이메일로 사용자 조회 (비밀번호 있는 데이터 가져오기)
     const user = await this.usersService.getUserByEmail(email, true);
     if (_.isNil(user) || user.isDeleted) {
-      throw new NotFoundException('해당하는 사용자가 없습니다.');
+      throw new NotFoundException(AUTH_MESSAGE_CONSTANT.COMMON.USER_NOT_FOUND);
     }
 
     // 암호화된 비밀번호 일치 검사
     const isComparePassword = await compare(password, user.password);
     if (!isComparePassword) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(AUTH_MESSAGE_CONSTANT.COMMON.USER_UNAUTHORIZED);
     }
 
     return user;
@@ -71,7 +74,10 @@ export class AuthService {
   async signIn(userId: number) {
     // 중간 과정은 AuthGuard('local')에서 처리
     // 토큰 발급
-    const accessToken = this.jwtService.sign({ id: userId }, { expiresIn: '12h' });
+    const accessToken = this.jwtService.sign(
+      { id: userId },
+      { expiresIn: AUTH_CONSTANT.COMMON.JWT.EXPIRES_IN }
+    );
     const refreshToken = this.jwtService.sign(
       { id: userId },
       { secret: process.env.REFRESH_SECRET_KEY }
@@ -89,22 +95,25 @@ export class AuthService {
     const user = await this.usersService.getUserById(userId);
 
     if (user.refreshToken === '') {
-      throw new BadRequestException('이미 로그아웃한 상태입니다.');
+      throw new BadRequestException(AUTH_MESSAGE_CONSTANT.SIGN_OUT.ALREADY);
     }
 
     // Refresh Token 삭제 (soft delete)
     await this.usersService.deleteRefreshToken(userId);
 
     return {
-      status: 201,
-      message: '로그아웃에 성공했습니다.',
+      status: HttpStatus.OK,
+      message: AUTH_MESSAGE_CONSTANT.SIGN_OUT.SUCCEED,
     };
   }
 
   // 토큰 재발급
   async reissue(userId: number) {
     // 토큰 발급
-    const accessToken = this.jwtService.sign({ id: userId }, { expiresIn: '12h' });
+    const accessToken = this.jwtService.sign(
+      { id: userId },
+      { expiresIn: AUTH_CONSTANT.COMMON.JWT.EXPIRES_IN }
+    );
     const refreshToken = this.jwtService.sign(
       { id: userId },
       { secret: process.env.REFRESH_SECRET_KEY }

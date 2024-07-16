@@ -5,6 +5,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import _ from 'lodash';
 import { JwtPayLoad } from '../interfaces/jwt-payload.interface';
 import { UsersService } from 'src/users/users.service';
+import { AUTH_CONSTANT } from 'src/constants/Auth/auth.constant';
+import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,14 +16,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('JWT_SECRET_KEY'),
+      secretOrKey: configService.get(AUTH_CONSTANT.COMMON.JWT.KEY_NAME),
     });
   }
 
   async validate(payload: JwtPayLoad) {
     const user = await this.userService.getUserById(payload.id);
     if (_.isNil(user) || user.id !== payload.id) {
-      throw new NotFoundException('인증된 사용자가 없습니다.');
+      throw new NotFoundException(AUTH_MESSAGE_CONSTANT.COMMON.USER_NOT_FOUND);
     }
 
     return user;

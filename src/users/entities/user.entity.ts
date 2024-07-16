@@ -15,32 +15,32 @@ import { Card } from 'src/cards/entities/card.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Member } from 'src/boards/entities/member.entity';
+import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
 
 @Entity({
   name: 'users',
 })
 export class User {
-  @PrimaryGeneratedColumn({unsigned: true})
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
   @IsEmail()
-  @IsNotEmpty({ message: '이메일을 입력해 주세요.' })
+  @IsNotEmpty({ message: AUTH_MESSAGE_CONSTANT.COMMON.EMAIL.IS_NOT_EMPTY })
   @Column({ type: 'varchar', unique: true, nullable: false })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: '닉네임을 입력해 주세요.' })
+  @IsNotEmpty({ message: AUTH_MESSAGE_CONSTANT.COMMON.NICKNAME.IS_NOT_EMPTY })
   @Column({ type: 'varchar', unique: true, nullable: false })
   nickname: string;
 
   @IsString()
-  @IsNotEmpty({ message: '비밀번호를 입력해 주세요.' })
+  @IsNotEmpty({ message: AUTH_MESSAGE_CONSTANT.COMMON.PASSWORD.IS_NOT_EMPTY })
   @Column({ type: 'varchar', select: false, nullable: false })
   password: string;
 
   @IsString()
-  @IsNotEmpty({ message: '프로필 이미지를 입력해 주세요.' })
-  @Column({ type: 'varchar', unique: true, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   profileImg: string;
 
   @Column({ type: 'varchar', nullable: true })
