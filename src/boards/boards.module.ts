@@ -7,19 +7,18 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
-import { RedisModule } from 'src/redis/redis.module';
-import { RedisService } from 'src/redis/redis.service';
-import { EmailService } from 'src/redis/email.service';
+import { EmailService } from 'src/boards/meilers/email.service';
+import { EmailModule } from 'src/boards/meilers/email.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Board, User]),
     CacheModule.register(),
     UsersModule,
-    RedisModule,
+    EmailModule,
   ],
   controllers: [BoardsController],
-  providers: [BoardsService, UsersService, RedisService, EmailService],
+  providers: [BoardsService, UsersService, EmailService],
   exports: [TypeOrmModule],
 })
 export class BoardsModule {}

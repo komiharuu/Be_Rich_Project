@@ -14,7 +14,7 @@ import { UsersService } from 'src/users/users.service';
 import { Board } from './entities/board.entity';
 import { User } from 'src/users/entities/user.entity';
 import { v4 as uuid4 } from 'uuid';
-import { RedisService } from 'src/redis/redis.service';
+import { EmailService } from 'src/boards/meilers/email.service';
 
 @Injectable()
 export class BoardsService {
@@ -24,7 +24,7 @@ export class BoardsService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly redisService: RedisService
+    private readonly emailService: EmailService
   ) {}
 
   /* 보드 생성 */
@@ -213,11 +213,8 @@ export class BoardsService {
     //인증 토큰 생성
     const token = uuid4();
 
-    //레디스에 인증 토큰 저장
-    await this.redisService.set(token, { id, user }, { ttl: 3600 });
-
     //이메일 전송
-    await this.redisService.sendEmail(
+    await this.emailService.sendEmail(
       inviteDto.email,
       '트렐로 서비스 초대 발송',
       `
