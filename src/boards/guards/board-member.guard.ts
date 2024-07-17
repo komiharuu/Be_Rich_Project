@@ -20,8 +20,6 @@ export class BoardMemberGuard implements CanActivate {
         relations: ['user'],
       });
 
-      console.log('boards:', boards);
-
       if (boards.length === 0) {
         throw new NotFoundException('보유한 보드가 없습니다.');
       }

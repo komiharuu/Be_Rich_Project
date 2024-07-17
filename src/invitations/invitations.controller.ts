@@ -46,4 +46,15 @@ export class InvitationsController {
     const user: User = req.user;
     return this.invitationsService.acceptInvitation(token, user);
   }
+
+  /**
+   * 보드 초대 거절
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.CREATED)
+  @Get(':boardId/decline-invitation')
+  declineInvitation(@Query('token') token: string, @Req() req: any) {
+    const user: User = req.user;
+    return this.invitationsService.declineInvitation(token, user);
+  }
 }
