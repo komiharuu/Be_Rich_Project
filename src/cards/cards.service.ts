@@ -78,7 +78,7 @@ export class CardsService {
       startDate,
       dueDate,
     });
-    console.log(updateCard);
+
     return updateCard;
   }
 
@@ -159,6 +159,10 @@ export class CardsService {
 
     const assignCard = await this.cardRepository.save(card);
 
-    return assignCard;
+    return {
+      assignorId: card.assignorId,
+      assigneeId: card.assigneeId,
+      cardId: card.id,
+    };
   }
 }

@@ -47,8 +47,6 @@ export class CardsController {
     return {
       status: HttpStatus.CREATED,
       message: CARDMESSAGE.SUCCESS.UPDATE,
-      cardId,
-      ...updateCardDto,
     };
   }
 
@@ -61,13 +59,7 @@ export class CardsController {
   // 카드 작업자 할당
   @Patch('/:cardId/assign')
   async assignCard(@Param('cardId') cardId: number, @Body() assignCardDto: AssignCardDto) {
-    await this.cardsService.assignCard(cardId, assignCardDto);
-    return {
-      status: HttpStatus.CREATED,
-      message: CARDMESSAGE.SUCCESS.ASSIGN,
-      cardId,
-      ...assignCardDto,
-    };
+    return await this.cardsService.assignCard(cardId, assignCardDto);
   }
 
   // 카드 삭제
