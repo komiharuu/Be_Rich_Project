@@ -20,13 +20,6 @@ export class UpdateCardDto extends PartialType(CreateCardDto) {
   @IsString()
   color: string;
 
-  @Type(() => Number)
-  assignment_id: number;
-
-  @Type(() => Number)
-  @IsNumber()
-  collaborator_id: number;
-
   startdate: Date;
 
   duedate: Date;

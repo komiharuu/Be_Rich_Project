@@ -22,30 +22,10 @@ import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
 @UseGuards(AuthGuard('jwt'))
 @Controller('lists')
 export class ListsController {
-<<<<<<< HEAD
-  deleteList(req: { params: { listId: number }; user: { id: number } }, listId: number) {
-    throw new Error('Method not implemented.');
-  }
-  updateList(
-    req: { params: { listId: number }; user: { id: number } },
-    listId: number,
-    updateListDto: { title: string }
-  ) {
-    throw new Error('Method not implemented.');
-  }
-  createList(req: { user: { id: number } }, createListDto: { boardId: number; title: string }) {
-    throw new Error('Method not implemented.');
-  }
-  getLists(req: { user: { id: number } }, getListsDto: { board: number }) {
-    throw new Error('Method not implemented.');
-  }
-
-=======
->>>>>>> b6b5f30278a86476908734afbfb6e8685fccef98
   constructor(private readonly listsService: ListService) {}
 
   @Post()
-  async createList(@Body() createListDto: CreateListDto, @Req() req: any ): Promise<List> {
+  async createList(@Body() createListDto: CreateListDto, @Req() req: any): Promise<List> {
     const userId = req.user.userId;
     return this.listsService.createList(createListDto, userId);
   }
@@ -61,13 +41,8 @@ export class ListsController {
   }
 
   @Delete(':id')
-<<<<<<< HEAD
-  async remove(@Param('id') id: number): Promise<{ message: string }> {
-    return this.listsService.delete(id);
-=======
-  async deleteList(@Param('id') id: number): Promise< {message:string} > {
+  async deleteList(@Param('id') id: number): Promise<{ message: string }> {
     return this.listsService.deleteList(id);
->>>>>>> b6b5f30278a86476908734afbfb6e8685fccef98
   }
 
   @Patch(':id/move')

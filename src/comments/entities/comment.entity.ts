@@ -15,7 +15,7 @@ export class Comment {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column({ type: 'int', name: 'user_id', unsigned: true })
+  @Column({ type: 'int', name: 'user_id', unsigned: true, nullable: true })
   userId: number;
 
   @Column({ type: 'int', name: 'card_id', unsigned: true })

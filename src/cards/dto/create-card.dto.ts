@@ -16,8 +16,6 @@ export class CreateCardDto {
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.DESCRIPTION.REQUIRED })
   description: string;
 
-  position: number;
-
   // @Type(() => Number)
   // @IsNumber()
   // @IsNotEmpty({ message: '위치를 입력해주세요.' })
