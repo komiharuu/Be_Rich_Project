@@ -10,9 +10,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class UpdateCardDto extends PartialType(CreateCardDto) {
+export class UpdateCardDto {
   @IsString()
-  name: string;
+  title: string;
 
   @IsString()
   description: string;
@@ -20,7 +20,7 @@ export class UpdateCardDto extends PartialType(CreateCardDto) {
   @IsString()
   color: string;
 
-  startdate: Date;
+  startDate: Date;
 
-  duedate: Date;
+  dueDate: Date;
 }
