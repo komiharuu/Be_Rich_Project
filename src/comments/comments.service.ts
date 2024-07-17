@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
-import { GetCommentListDto } from './dto/get-comment-list.dto';
 import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 import { User } from 'src/users/entities/user.entity';
 

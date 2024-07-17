@@ -1,14 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateCardDto } from './create-card.dto';
-import {
-  IS_NUMBER_STRING,
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsNumberString,
-  IsString,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString } from 'class-validator';
 
 export class UpdateCardDto {
   @IsString()
