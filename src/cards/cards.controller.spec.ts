@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CardsController } from './cards.controller';
 import { CardsService } from './cards.service';
 import { title } from 'process';
+import { UpdateCardDto } from './dto/update-card.dto';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Board } from 'src/boards/entities/board.entity';
 
 // ListsService Mocking
 const mockCardsService = {
   createCard: jest.fn(),
-  getCardList: jest.fn(),
   getCardDetail: jest.fn(),
   updateCard: jest.fn(),
   deleteCard: jest.fn(),
@@ -20,27 +22,19 @@ const createCardDto = {
   color: '#FFFFFF',
 };
 
-// Get Card List DTO
-const getCardListDto = {
-  listId: 1,
-};
-
 // Update card DTO
-const updateCardDto = {
+const updateCardDto: UpdateCardDto = {
   title: 'Test Title',
   description: 'Test Description',
   color: '#FFFFFF',
-  assign: [
-    {
-      assignorId: 1, // 할당한 사람 ID
-      assigneeId: 2, // 할당된 사람 ID
-    },
-    {
-      assignorId: 1, // 할당한 사람 ID
-      assigneeId: 3, // 할당된 사람 ID
-    },
-  ],
+  startDate: new Date(),
+  dueDate: new Date(),
 };
+
+// Board Repository Mocking
+const mockBoardsRepository = () => ({
+  find: jest.fn(),
+});
 
 describe('CardsController', () => {
   let controller: CardsController;
@@ -54,7 +48,10 @@ describe('CardsController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CardsController],
-      providers: [{ provide: CardsService, useValue: mockCardsService }],
+      providers: [
+        { provide: CardsService, useValue: mockCardsService },
+        { provide: getRepositoryToken(Board), useValue: mockBoardsRepository },
+      ],
     }).compile();
 
     controller = module.get<CardsController>(CardsController);
@@ -94,7 +91,7 @@ describe('CardsController', () => {
       // WHEN
       // 실제로 컨트롤러의 메서드를 동작시키는 부분
       // 컨트롤러 메서드의 매개변수로 req, createCardDto를 사용
-      const response = await controller.createCard(req, createCardDto);
+      const response = await controller.createCard(createCardDto, req);
 
       // THEN
       // 테스트 진행하는 부분
@@ -103,41 +100,7 @@ describe('CardsController', () => {
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(createCardResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockCardsService.createCard).toHaveBeenCalledWith(req.user.id, createCardDto);
-    });
-
-    it('should get card list', async () => {
-      // GIVEN
-      // 필요한 설정을 하는 부분
-      const getCardListResult = [
-        {
-          id: 1,
-          listId: 1,
-          title: 'Test Title 1',
-          createdAt: '2024-07-05T23:08:07.001Z',
-          updatedAt: '2024-07-05T23:08:07.001Z',
-        },
-        {
-          id: 2,
-          listId: 1,
-          title: 'Test Title 2',
-          createdAt: '2024-07-05T23:08:07.001Z',
-          updatedAt: '2024-07-05T23:08:07.001Z',
-        },
-      ];
-      const req = { user: { id: 1 } };
-
-      mockCardsService.getCardList.mockResolvedValue(getCardListResult);
-
-      // WHEN
-      const response = await controller.getCardList(req, getCardListDto);
-
-      // THEN
-      expect(mockCardsService.getCardList).toHaveBeenCalledTimes(1);
-      // 결과값의 인스턴스가 배열인지 확인
-      expect(response).toBeInstanceOf(Array);
-      expect(response).toEqual(getCardListResult);
-      expect(mockCardsService.getCardList).toHaveBeenCalledWith(req.user.id, getCardListDto);
+      expect(mockCardsService.createCard).toHaveBeenCalledWith(createCardDto, req.user);
     });
 
     it('should get card detail', async () => {
@@ -168,14 +131,12 @@ describe('CardsController', () => {
       mockCardsService.getCardDetail.mockResolvedValue(getCardDetailResult);
 
       // WHEN
-      const response = await controller.getCardDetail(req, req.params.cardId);
+      const response = await controller.getCardDetail(req.params.cardId);
 
       // THEN
-      expect(response).toHaveBeenCalledTimes(1);
-      // 결과값의 인스턴스가 배열인지 확인
-      expect(mockCardsService.getCardDetail).toBeInstanceOf(Array);
+      expect(mockCardsService.getCardDetail).toHaveBeenCalledTimes(1);
       expect(response).toEqual(getCardDetailResult);
-      expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.user.id, req.params.cardId);
+      expect(mockCardsService.getCardDetail).toHaveBeenCalledWith(req.params.cardId);
     });
 
     it('should update card', async () => {
@@ -189,13 +150,12 @@ describe('CardsController', () => {
       mockCardsService.updateCard.mockResolvedValue(updateCardResult);
 
       // WHEN
-      const response = await controller.updateCard(req, req.params.cardId, updateCardDto);
+      const response = await controller.updateCard(req.params.cardId, updateCardDto);
 
       // THEN
       expect(mockCardsService.updateCard).toHaveBeenCalledTimes(1);
       expect(response).toEqual(updateCardResult);
       expect(mockCardsService.updateCard).toHaveBeenCalledWith(
-        req.user.id,
         req.params.cardId,
         updateCardDto
       );
@@ -212,12 +172,12 @@ describe('CardsController', () => {
       mockCardsService.deleteCard.mockResolvedValue(deleteCardResult);
 
       // WHEN
-      const response = await controller.deleteCard(req, req.params.cardId);
+      const response = await controller.deleteCard(req.params.cardId);
 
       // THEN
       expect(mockCardsService.deleteCard).toHaveBeenCalledTimes(1);
       expect(response).toEqual(deleteCardResult);
-      expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.user.id, req.params.cardId);
+      expect(mockCardsService.deleteCard).toHaveBeenCalledWith(req.params.cardId);
     });
   });
 });

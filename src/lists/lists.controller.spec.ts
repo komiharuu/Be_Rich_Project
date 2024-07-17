@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ListsController } from './lists.controller';
 import { ListService } from './lists.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Board } from 'src/boards/entities/board.entity';
 // import { CreateListDto } from './dto/create-list.dto';
 
 // ListsService Mocking
@@ -39,7 +41,10 @@ describe('ListsController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ListsController],
-      providers: [{ provide: ListService, useValue: mockListsService }],
+      providers: [
+        { provide: ListService, useValue: mockListsService },
+        { provide: getRepositoryToken(Board), useValue: {} },
+      ],
     }).compile();
 
     controller = module.get<ListsController>(ListsController);
@@ -80,7 +85,7 @@ describe('ListsController', () => {
       // WHEN
       // 실제로 컨트롤러의 메서드를 동작시키는 부분
       // 컨트롤러 메서드의 매개변수로 req, createListDto를 사용
-      const response = await controller.createList(req, createListDto);
+      const response = await controller.createList(createListDto, req);
 
       // THEN
       // 테스트 진행하는 부분
@@ -89,7 +94,7 @@ describe('ListsController', () => {
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(createListResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockListsService.createList).toHaveBeenCalledWith(req.user.id, createListDto);
+      expect(mockListsService.createList).toHaveBeenCalledWith(createListDto, req.user.id);
     });
   });
 
@@ -110,19 +115,19 @@ describe('ListsController', () => {
           updatedAt: '2024-07-05T23:08:07.001Z',
         },
       ];
-      const req = { user: { id: 1 } };
+      const req = { params: { boardId: 1 }, user: { id: 1 } };
 
       mockListsService.getLists.mockResolvedValue(getListsResult);
 
       // WHEN
-      const response = await controller.getLists(req, getListsDto);
+      const response = await controller.getLists(req.params.boardId);
 
       // THEN
       expect(mockListsService.getLists).toHaveBeenCalledTimes(1);
       // 결과값의 인스턴스가 배열인지 확인
       expect(response).toBeInstanceOf(Array);
       expect(response).toEqual(getListsResult);
-      expect(mockListsService.getLists).toHaveBeenCalledWith(req.user.id, getListsDto);
+      expect(mockListsService.getLists).toHaveBeenCalledWith(req.user.id);
     });
   });
 
@@ -133,21 +138,17 @@ describe('ListsController', () => {
         status: 201,
         message: '리스트 수정에 성공했습니다.',
       };
-      const req = { params: { listId: 1 }, user: { id: 1 } };
+      const req = { params: { listId: 1 } };
 
       mockListsService.updateList.mockResolvedValue(updateListResult);
 
       // WHEN
-      const response = await controller.updateList(req, req.params.listId, updateListDto);
+      const response = await controller.updateList(req.params.listId, updateListDto);
 
       // THEN
       expect(mockListsService.updateList).toHaveBeenCalledTimes(1);
       expect(response).toEqual(updateListResult);
-      expect(mockListsService.updateList).toHaveBeenCalledWith(
-        req.user.id,
-        req.params.listId,
-        updateListDto
-      );
+      expect(mockListsService.updateList).toHaveBeenCalledWith(req.params.listId, updateListDto);
     });
   });
 
@@ -158,17 +159,17 @@ describe('ListsController', () => {
         status: 201,
         message: '리스트 삭제에 성공했습니다.',
       };
-      const req = { params: { listId: 1 }, user: { id: 1 } };
+      const req = { params: { listId: 1 } };
 
       mockListsService.deleteList.mockResolvedValue(deleteListResult);
 
       // WHEN
-      const response = await controller.deleteList(req, req.params.listId);
+      const response = await controller.deleteList(req.params.listId);
 
       // THEN
       expect(mockListsService.deleteList).toHaveBeenCalledTimes(1);
       expect(response).toEqual(deleteListResult);
-      expect(mockListsService.deleteList).toHaveBeenCalledWith(req.user.id, req.params.listId);
+      expect(mockListsService.deleteList).toHaveBeenCalledWith(req.params.listId);
     });
   });
 });

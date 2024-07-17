@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Comment } from './entities/comment.entity';
+import { Board } from 'src/boards/entities/board.entity';
 
 // CommentsService Mocking
 const mockCommentsService = {
   createComment: jest.fn(),
-  getCommentList: jest.fn(),
   updateComment: jest.fn(),
   deleteComment: jest.fn(),
 };
@@ -14,11 +16,6 @@ const mockCommentsService = {
 const createCommentDto = {
   cardId: 1,
   comment: 'Test Comment',
-};
-
-// Get Comment List DTO
-const getCommentListDto = {
-  cardId: 1,
 };
 
 // Update Comment DTO
@@ -38,7 +35,11 @@ describe('CommentsController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommentsController],
-      providers: [CommentsService],
+      providers: [
+        { provide: CommentsService, useValue: mockCommentsService },
+        { provide: getRepositoryToken(Comment), useValue: {} },
+        { provide: getRepositoryToken(Board), useValue: {} },
+      ],
     }).compile();
 
     controller = module.get<CommentsController>(CommentsController);
@@ -76,7 +77,7 @@ describe('CommentsController', () => {
       // WHEN
       // 실제로 컨트롤러의 메서드를 동작시키는 부분
       // 컨트롤러 메서드의 매개변수로 req, createCardDto를 사용
-      const response = await controller.createComment(req, createCommentDto);
+      const response = await controller.createComment(createCommentDto, req);
 
       // THEN
       // 테스트 진행하는 부분
@@ -85,42 +86,7 @@ describe('CommentsController', () => {
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(createCommentResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockCommentsService.createComment).toHaveBeenCalledWith(req.user.id, createCommentDto);
-    });
-  });
-
-  describe('getCommentList', () => {
-    it('should get comment list', async () => {
-      // GIVEN
-      const getCommentListResult = [
-        {
-          id: 1,
-          comment: 'Test Comment 1',
-          createdAt: '2024-07-05T23:08:07.001Z',
-          updatedAt: '2024-07-05T23:08:07.001Z',
-        },
-        {
-          id: 2,
-          comment: 'Test Comment 2',
-          createdAt: '2024-07-05T23:08:07.001Z',
-          updatedAt: '2024-07-05T23:08:07.001Z',
-        },
-      ];
-      const req = { user: { id: 1 } };
-      mockCommentsService.getCommentList.mockResolvedValue(getCommentListResult);
-
-      // WHEN
-      const response = await controller.getCommentList(req, getCommentListDto);
-
-      // THEN
-      expect(mockCommentsService.getCommentList).toHaveBeenCalledTimes(1);
-      // 결과값의 인스턴스가 배열인지 확인
-      expect(response).toBeInstanceOf(Array);
-      expect(response).toEqual(getCommentListResult);
-      expect(mockCommentsService.getCommentList).toHaveBeenCalledWith(
-        req.user.id,
-        getCommentListDto
-      );
+      expect(mockCommentsService.createComment).toHaveBeenCalledWith(createCommentDto, req.user);
     });
   });
 
@@ -136,13 +102,12 @@ describe('CommentsController', () => {
       mockCommentsService.updateComment.mockResolvedValue(updateCommentResult);
 
       // WHEN
-      const response = await controller.updateComment(req, req.params.commentId, updateCommentDto);
+      const response = await controller.updateComment(req.params.commentId, updateCommentDto);
 
       // THEN
       expect(mockCommentsService.updateComment).toHaveBeenCalledTimes(1);
       expect(response).toEqual(updateCommentResult);
       expect(mockCommentsService.updateComment).toHaveBeenCalledWith(
-        req.user.id,
         req.params.commentId,
         updateCommentDto
       );
@@ -161,15 +126,12 @@ describe('CommentsController', () => {
       mockCommentsService.deleteComment.mockResolvedValue(deleteCommentResult);
 
       // WHEN
-      const response = await controller.deleteComment(req, req.params.commentId);
+      const response = await controller.deleteComment(req.params.commentId);
 
       // THEN
       expect(mockCommentsService.deleteComment).toHaveBeenCalledTimes(1);
       expect(response).toEqual(deleteCommentResult);
-      expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(
-        req.user.id,
-        req.params.commentId
-      );
+      expect(mockCommentsService.deleteComment).toHaveBeenCalledWith(req.params.commentId);
     });
   });
 });
