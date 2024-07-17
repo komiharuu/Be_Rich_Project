@@ -143,8 +143,7 @@ export class CardsService {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
 
-    // todo assignorId, assigneeId는 user정보에 있어야합니다.
-    // assignorId와 assigneeId가 실제 사용자 ID인지 확인합니다.
+    // todo assignorId, assigneeId는 user정보에 있어야한다. 그래서 확인 절차에 들어갑니다
     const assignor = await this.userRepository.findOne({ where: { id: assignorId } });
     const assignee = await this.userRepository.findOne({ where: { id: assigneeId } });
 
