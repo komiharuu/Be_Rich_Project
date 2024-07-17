@@ -195,7 +195,7 @@ describe('AuthService', () => {
     it('should sign out', async () => {
       // GIVEN
       const signOutResult = {
-        status: HttpStatus.OK,
+        status: HttpStatus.CREATED,
         message: AUTH_MESSAGE_CONSTANT.SIGN_OUT.SUCCEED,
       };
       mockUsersService.getUserById.mockResolvedValue(signOutResult);
