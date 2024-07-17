@@ -10,6 +10,7 @@ import {
   UseGuards,
   Query,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
@@ -18,30 +19,40 @@ import { CARDMESSAGE } from 'src/constants/card-message.constant';
 import { AuthGuard } from '@nestjs/passport';
 import { MoveCardDto } from './dto/move-card.dto';
 import { User } from 'src/users/entities/user.entity';
+import { Card } from './entities/card.entity';
+import { BoardMemberGuard } from 'src/boards/board-member.guard';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
+  // 카드 생성
   @Post()
-  create(@Body() createCardDto: CreateCardDto, @Req() req: any) {
+  createCard(@Body() createCardDto: CreateCardDto, @Req() req: any) {
     const user: User = req.user;
     return this.cardsService.createCard(createCardDto, user);
   }
 
+  // 카드 전체 조회
   @Get()
-  async getCardList() {
+  async getCardList(): Promise<Card[]> {
     return this.cardsService.getCardList();
   }
 
+  // 카드 상세조회
   @Get('/:cardId')
   async getCardDetail(
     @Param('cardId') cardId: number,
-    assignment_id: number,
-    collaborator_id: number
+    assignmentId: number,
+    collaboratorId: number
   ) {
-    return this.cardsService.getCardDetail(cardId, assignment_id, collaborator_id);
+    return this.cardsService.getCardDetail(cardId, assignmentId, collaboratorId);
+  }
+
+  @Patch('/:cardId/move')
+  async moveCard(@Param('cardId') cardId: number, @Body() moveCardDto: MoveCardDto): Promise<Card> {
+    return this.cardsService.moveCard(moveCardDto, cardId);
   }
 
   @Patch('/:cardId')
@@ -53,12 +64,6 @@ export class CardsController {
       cardId,
       ...updateCardDto,
     };
-  }
-
-  @Patch('/:cardId/move')
-  async moveCard(@Param('cardId') cardId: number, @Body() moveCardDto: MoveCardDto) {
-    await this.cardsService.moveCard(cardId, moveCardDto);
-    return { statusCode: HttpStatus.CREATED, message: CARDMESSAGE.SUCCESS.UPDATE };
   }
 
   @Delete('/:cardId')

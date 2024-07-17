@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,39 +17,42 @@ export class CardsService {
 
   // 카드 생성
   async createCard(createCardDto: CreateCardDto, user: User) {
-    const { listId, title, description, position } = createCardDto;
+    const { list_id, title, description, position } = createCardDto;
+    const cards = await this.cardRepository.find({ order: { position: 'ASC' } });
 
-    let newPosition;
-    if (!position) {
+    let newPosition: number;
+
+    if (cards.length === 0) {
       newPosition = 1024;
     } else {
-      const maxPosition = await this.cardRepository.query(
-        `SELECT MAX(position) as max FROM cards WHERE list_id = ${listId}`
-      );
-      newPosition = (maxPosition[0].max || 0) + 1024;
+      const maxPosition = cards[cards.length - 1].position;
+
+      newPosition = maxPosition + 1024;
     }
+
     const newCard = await this.cardRepository.save({
       user: { id: user.id },
-      list: { id: listId },
+      list: { id: list_id },
       title,
-      newPosition,
+      position: newPosition,
       description,
     });
-
-    // position이 카드 테이블에 데이터가 아무것도 없으면 1024, 있으면 그중에 제일 큰 값에다가 +1024가 되어야한다.
 
     return newCard;
   }
 
   // // 카드 리스트 조회
   async getCardList(): Promise<any[]> {
-    const cards = await this.cardRepository.find();
+    const cards = await this.cardRepository.find({
+      order: { position: 'ASC' },
+    });
 
     // 각 카드에 추가 정보 할당
     const updatedCards = cards.map((card) => ({
       cardId: card.id,
       listId: card.listId,
       title: card.title,
+      position: card.position,
       createdAt: card.created_at,
       updatedAt: card.updated_at,
     }));
@@ -57,20 +60,21 @@ export class CardsService {
     return updatedCards;
   }
 
-  // 카드 상세조회
-  async getCardDetail(cardId: number, assignment_id: number, collaborator_id: number) {
-    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+  // 카드 상세조회 - 상세조회한 카드에 댓글도 같이 보이게 함
+  async getCardDetail(cardId: number, assignmentId: number, collaboratorId: number) {
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+      relations: ['comments'],
+    });
 
     return {
       card,
-      assignorId: assignment_id,
-      assigneeId: collaborator_id,
     };
   }
 
   // 카드 수정
   async updateCard(cardId: number, updateCardDto: UpdateCardDto) {
-    const { name, description, color, assignment_id, collaborator_id } = updateCardDto;
+    const { name, description, color, assignorId, assigneeId } = updateCardDto;
 
     // 수정할 카드 아이디를 찾습니다.
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
@@ -85,8 +89,8 @@ export class CardsService {
       name,
       description,
       color,
-      assignment_id,
-      collaborator_id,
+      assignorId,
+      assigneeId,
     });
 
     return updateCard;
@@ -101,52 +105,49 @@ export class CardsService {
     await this.cardRepository.delete(cardId);
   }
 
-  async moveCard(cardId: number, moveCardDto: MoveCardDto) {
-    const id = cardId;
-    let { prevElIndexNumber, nextElIndexNumber, position } = moveCardDto;
+  // 끝의부분 수정 및 포지션 변경안됨 - id를 통한 이동
+  async moveCard(moveCardDto: MoveCardDto, cardId: number): Promise<Card> {
+    const { prePositionNumber, nextPositionNumber } = moveCardDto;
 
-    if (prevElIndexNumber === undefined) {
-      position = nextElIndexNumber - 512;
-    } else if (nextElIndexNumber === undefined) {
-      position = prevElIndexNumber + 512;
+    let newPosition: number;
+
+    // changePositionNumber가 1일 경우, 첫 번째 카드의 위치를 절반으로 나눈 값으로 newPosition을 설정합니다.
+    console.log(prePositionNumber, nextPositionNumber);
+    if (prePositionNumber === undefined) {
+      newPosition = nextPositionNumber - 512;
+      // 드래그된 요소가 가장 상단에 있는 경우
+    } else if (nextPositionNumber === undefined) {
+      newPosition = prePositionNumber + 512;
+      // 드래그된 요소가 가장 하단에 있는 경우
     } else {
-      position = Math.floor((prevElIndexNumber + nextElIndexNumber) / 2);
+      newPosition = Math.floor((prePositionNumber + nextPositionNumber) / 2);
     }
 
-    // 카드 위치 업데이트
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
 
+    if (!card) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
+    }
+    card.position = newPosition;
+
+    await this.cardRepository.save(card);
     if (
-      Math.abs(position - prevElIndexNumber) <= 1 ||
-      Math.abs(position - nextElIndexNumber) <= 1
+      (prePositionNumber !== undefined && Math.abs(newPosition - prePositionNumber) <= 1) ||
+      (nextPositionNumber !== undefined && Math.abs(newPosition - nextPositionNumber) <= 1)
     ) {
-      await this.cardRepository
-        .createQueryBuilder()
-        .update(Card)
-        .set({ position })
-        .where({ id: cardId })
-        .execute();
-
-      const cards = await this.cardRepository
-        .createQueryBuilder('card')
-        .orderBy('card.position', 'ASC')
-        .getMany();
-
-      // 모든 카드의 위치를 새로 계산하여 업데이트
-      await Promise.all(
-        cards.map(async (card, index) => {
-          await this.cardRepository
-            .createQueryBuilder()
-            .update(card)
-            .set({ position: (index + 1) * 1024 })
-            .where({ id: cardId })
-            .execute();
-        })
-      );
-      await this.cardRepository.save(cards);
-      return cards;
+      const cards = await this.cardRepository.find({
+        order: { position: 'ASC' },
+      });
+      console.log(2);
+      // 모든 카드들에 대해 순차적으로 위치를 재설정합니다.
+      for (let i = 0; i < cards.length; i++) {
+        cards[i].position = (i + 1) * 1024;
+        await this.cardRepository.save(cards[i]);
+      }
     }
+
+    return card;
   }
 
-  // // 할당자 추가
-  // async addCollaborator();
+  // 작업자 할당
 }

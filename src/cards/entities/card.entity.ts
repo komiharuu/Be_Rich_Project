@@ -33,14 +33,14 @@ export class Card {
   @Column({ type: 'varchar', default: '#FFFFFF' })
   color: string;
 
-  @Column({ unsigned: true })
+  @Column({ unsigned: true, nullable: true })
   position: number;
 
-  @Column({ unsigned: true, name: 'assignment_id' })
-  assignmentId: number;
+  @Column({ unsigned: true, nullable: true, name: 'assignor_id' })
+  assignorId: number;
 
-  @Column({ type: 'json', nullable: true, name: 'collaborator_id' })
-  collaboratorId: number;
+  @Column({ type: 'json', nullable: true, name: 'assignee_id' })
+  assigneeId: number;
 
   @Column({ type: 'datetime', nullable: true })
   startdate: Date;
