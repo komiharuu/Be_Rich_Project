@@ -57,10 +57,10 @@ export class CardsController {
     return this.cardsService.moveCard(moveCardDto, cardId);
   }
 
-  // 카드 작업자 할당
-  // @Patch('/:cardId')
+  // // 카드 작업자 할당
+  // @Patch('/:cardId/assign')
   // async assignCard(@Param('cardId') cardId: number, @Body() updateCardDto: UpdateCardDto) {
-  //   await this.cardsService.updateCard(cardId, updateCardDto);
+  //   await this.cardsService.save(cardId, updateCardDto);
   //   return {
   //     statusCode: HttpStatus.CREATED,
   //     message: CARDMESSAGE.SUCCESS.UPDATE,

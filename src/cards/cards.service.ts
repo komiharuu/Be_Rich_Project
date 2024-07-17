@@ -7,12 +7,15 @@ import { Card } from './entities/card.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CARDMESSAGE } from 'src/constants/card-message.constant';
 import { MoveCardDto } from './dto/move-card.dto';
+import { AssignCardDto } from './dto/assign-card.dto';
 
 @Injectable()
 export class CardsService {
   constructor(
     @InjectRepository(Card)
-    private cardRepository: Repository<Card>
+    private cardRepository: Repository<Card>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   // 카드 생성
@@ -130,26 +133,31 @@ export class CardsService {
 
   // 작업자 할당
 
-  // async assignCard(cardId: number, updateCardDto: UpdateCardDto) {
-  //   const { name, description, color, assignorId, assigneeId } = updateCardDto;
+  async assignCard(cardId: number, assignCardDto: AssignCardDto) {
+    const { assignorId, assigneeId } = assignCardDto;
 
-  //   // 수정할 카드 아이디를 찾습니다.
-  //   const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    // 수정할 카드 아이디를 찾습니다.
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
 
-  //   if (!card) {
-  //     throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
-  //   }
+    if (!card) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
+    }
 
-  //   // 댓글을 수정합니다.
-  //   const assignCard = await this.cardRepository.save({
-  //     id: cardId,
-  //     name,
-  //     description,
-  //     color,
-  //     assignorId,
-  //     assigneeId,
-  //   });
+    // todo assignorId, assigneeId는 user정보에 있어야합니다.
+    // assignorId와 assigneeId가 실제 사용자 ID인지 확인합니다.
+    const assignor = await this.userRepository.findOne({ where: { id: assignorId } });
+    const assignee = await this.userRepository.findOne({ where: { id: assigneeId } });
 
-  //   return assignCard;
-  // }
+    if (!assignor || !assignee) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.USER);
+    }
+
+    // 카드를 할당합니다.
+    const assignCard = await this.cardRepository.save({
+      assignorId,
+      assigneeId,
+    });
+
+    return assignCard;
+  }
 }
