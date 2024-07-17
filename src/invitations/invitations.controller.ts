@@ -25,7 +25,7 @@ export class InvitationsController {
    * 보드 초대
    */
   @UseGuards(AuthGuard('jwt'), BoardOwnerGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post(':boardId/invite')
   createInvitation(
     @Param('boardId') id: number,
@@ -51,7 +51,7 @@ export class InvitationsController {
    * 보드 초대 거절
    */
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Get(':boardId/decline-invitation')
   declineInvitation(@Query('token') token: string, @Req() req: any) {
     const user: User = req.user;

@@ -125,7 +125,7 @@ export class InvitationsService {
     );
 
     return {
-      status: HttpStatus.OK,
+      status: HttpStatus.CREATED,
       message: '성공적으로 초대 메일을 전송하였습니다.',
     };
   }
@@ -188,7 +188,7 @@ export class InvitationsService {
     await this.invitationRepository.save(invitation);
 
     return {
-      status: HttpStatus.OK,
+      status: HttpStatus.NO_CONTENT,
       message: '성공적으로 초대를 거절하였습니다.',
     };
   }
