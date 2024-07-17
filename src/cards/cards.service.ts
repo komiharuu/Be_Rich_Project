@@ -8,6 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { CARDMESSAGE } from 'src/constants/card-message.constant';
 import { MoveCardDto } from './dto/move-card.dto';
 import { AssignCardDto } from './dto/assign-card.dto';
+import { List } from 'src/lists/entities/list.entity';
 
 @Injectable()
 export class CardsService {
@@ -15,13 +16,21 @@ export class CardsService {
     @InjectRepository(Card)
     private cardRepository: Repository<Card>,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @InjectRepository(List)
+    private listRepository: Repository<List>
   ) {}
 
   // 카드 생성
   async createCard(createCardDto: CreateCardDto, user: User) {
     const { listId, title, description } = createCardDto;
     const cards = await this.cardRepository.find({ order: { position: 'ASC' } });
+
+    // 리스트를 조회합니다.
+    const list = await this.listRepository.findOne({ where: { id: listId } });
+    if (!list) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.LIST);
+    }
 
     let newPosition: number;
 
