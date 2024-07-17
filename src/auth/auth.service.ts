@@ -31,7 +31,6 @@ export class AuthService {
 
     // 이메일 중복 체크
     let existedUser = await this.usersService.getUserByEmail(email);
-    console.log(existedUser);
     if (existedUser) {
       throw new ConflictException(AUTH_MESSAGE_CONSTANT.SIGN_UP.CONFLICT_EMAIL);
     }
@@ -102,7 +101,7 @@ export class AuthService {
     await this.usersService.deleteRefreshToken(userId);
 
     return {
-      status: HttpStatus.OK,
+      status: HttpStatus.CREATED,
       message: AUTH_MESSAGE_CONSTANT.SIGN_OUT.SUCCEED,
     };
   }
