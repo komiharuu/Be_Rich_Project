@@ -77,7 +77,7 @@ describe('ListsController', () => {
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
       };
-      const req = { user: { id: 1 } };
+      const req = { params: { boardId: 1 }, user: { id: 1 } };
 
       // 모킹된 서비스 코드의 반환값을 설정하는 부분
       mockListsService.createList.mockResolvedValue(createListResult);
@@ -85,7 +85,7 @@ describe('ListsController', () => {
       // WHEN
       // 실제로 컨트롤러의 메서드를 동작시키는 부분
       // 컨트롤러 메서드의 매개변수로 req, createListDto를 사용
-      const response = await controller.createList(createListDto, req);
+      const response = await controller.createList(req.params.boardId, createListDto, req);
 
       // THEN
       // 테스트 진행하는 부분
@@ -94,7 +94,11 @@ describe('ListsController', () => {
       // 실행 결과값과 임의의 반환값이 같은지 확인
       expect(response).toEqual(createListResult);
       // 서비스의 메서드를 호출할 때 다음과 같은 매개변수를 사용하는지 확인
-      expect(mockListsService.createList).toHaveBeenCalledWith(createListDto, req.user.id);
+      expect(mockListsService.createList).toHaveBeenCalledWith(
+        createListDto,
+        req.params.boardId,
+        req.user.id
+      );
     });
   });
 
