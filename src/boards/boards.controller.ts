@@ -17,8 +17,8 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
-import { BoardMemberGuard } from './board-member.guard';
-import { BoardOwnerGuard } from './board-owner.guard';
+import { BoardMemberGuard } from './guards/board-member.guard';
+import { BoardOwnerGuard } from './guards/board-owner.guard';
 
 @ApiTags('보드')
 @Controller('boards')
