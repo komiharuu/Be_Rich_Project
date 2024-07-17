@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Board } from './board.entity';
-import { Status } from '../types/invitation-status.type';
+import { Board } from 'src/boards/entities/board.entity';
+import { Status } from '../../invitations/types/invitation-status.type';
 
 @Entity({ name: 'invitations' })
 export class Invitation {

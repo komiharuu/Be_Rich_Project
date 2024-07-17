@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from '../types/member-role.type';
-import { Board } from './board.entity';
+import { Role } from '../../boards/types/member-role.type';
+import { Board } from '../../boards/entities/board.entity';
 import { Invitation } from './invitation.entity';
 
 @Entity({ name: 'members' })

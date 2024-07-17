@@ -13,7 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { BoardOwnerGuard } from 'src/boards/guards/board-owner.guard';
-import { CreateInvitationDto } from 'src/boards/dto/create-invitation.dto';
+import { CreateInvitationDto } from 'src/invitations/dto/create-invitation.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InvitationsService } from './invitations.service';
 

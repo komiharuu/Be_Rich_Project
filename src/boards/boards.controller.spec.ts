@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { CreateInvitationDto } from './dto/create-invitation.dto';
+import { CreateInvitationDto } from '../invitations/dto/create-invitation.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';

@@ -14,7 +14,7 @@ import { List } from 'src/lists/entities/list.entity';
 import { Card } from 'src/cards/entities/card.entity';
 import { Board } from 'src/boards/entities/board.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
-import { Member } from 'src/boards/entities/member.entity';
+import { Member } from 'src/invitations/entities/member.entity';
 import { AUTH_MESSAGE_CONSTANT } from 'src/constants/Auth/auth-message.constant';
 
 @Entity({

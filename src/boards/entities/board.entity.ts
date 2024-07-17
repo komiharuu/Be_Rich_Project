@@ -9,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Invitation } from './invitation.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Member } from './member.entity';
+import { Member } from 'src/invitations/entities/member.entity';
+import { Invitation } from 'src/invitations/entities/invitation.entity';
 import { List } from 'src/lists/entities/list.entity';
 
 @Index('boardTitle', ['title'])
