@@ -4,6 +4,7 @@ export const CARDMESSAGE = {
       CARD_COMMENT: '해당 카드의 댓글을 찾을 수 없습니다.',
       CARD: '카드를 찾을 수 없습니다.',
       USER: '할당자를 찾을 수 없습니다',
+      LIST: '리스트를 찾을 수 없습니다',
     },
     NAME: {
       REQUIRED: '이름을 입력해주세요.',
