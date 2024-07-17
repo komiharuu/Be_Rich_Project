@@ -3,6 +3,7 @@ import { CardsService } from './cards.service';
 import { Card } from './entities/card.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { List } from 'src/lists/entities/list.entity';
 
 describe('CardsService', () => {
   let service: CardsService;
@@ -13,6 +14,7 @@ describe('CardsService', () => {
         CardsService,
         { provide: getRepositoryToken(Card), useValue: {} },
         { provide: getRepositoryToken(User), useValue: {} },
+        { provide: getRepositoryToken(List), useValue: {} },
       ],
     }).compile();
 
