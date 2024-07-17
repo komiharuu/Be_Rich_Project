@@ -1,15 +1,15 @@
 import { ConflictException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Invitation } from './entities/invitation.entity';
 import { Board } from 'src/boards/entities/board.entity';
+import { Member } from 'src/invitations/entities/member.entity';
 import { User } from 'src/users/entities/user.entity';
-import { v4 as uuid4 } from 'uuid';
-import { EmailService } from 'src/boards/meilers/email.service';
-import { Invitation } from 'src/boards/entities/invitation.entity';
-import { Role } from 'src/boards/types/member-role.type';
-import { Member } from 'src/boards/entities/member.entity';
-import { Status } from 'src/boards/types/invitation-status.type';
+import { EmailService } from 'src/invitations/meilers/email.service';
 import { UsersService } from 'src/users/users.service';
+import { v4 as uuid4 } from 'uuid';
+import { Role } from 'src/boards/types/member-role.type';
+import { Status } from './types/invitation-status.type';
 
 @Injectable()
 export class InvitationsService {
