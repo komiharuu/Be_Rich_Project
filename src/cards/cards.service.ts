@@ -33,13 +33,15 @@ export class CardsService {
       newPosition = maxPosition + 1024;
     }
 
-    const newCard = await this.cardRepository.save({
+    const newCard = this.cardRepository.create({
       user: { id: user.id },
       list: { id: listId },
       title,
       position: newPosition,
       description,
     });
+
+    await this.cardRepository.save(newCard);
 
     return newCard;
   }
@@ -58,7 +60,7 @@ export class CardsService {
 
   // 카드 수정
   async updateCard(cardId: number, updateCardDto: UpdateCardDto) {
-    const { name, description, color } = updateCardDto;
+    const { title, description, color, startDate, dueDate } = updateCardDto;
 
     // 수정할 카드 아이디를 찾습니다.
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
@@ -70,11 +72,13 @@ export class CardsService {
     // 댓글을 수정합니다.
     const updateCard = await this.cardRepository.save({
       id: cardId,
-      name,
+      title,
       description,
       color,
+      startDate,
+      dueDate,
     });
-
+    console.log(updateCard);
     return updateCard;
   }
 

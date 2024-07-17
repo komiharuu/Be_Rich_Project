@@ -38,13 +38,13 @@ export class CommentsController {
     @Body() updateCommentDto: UpdateCommentDto
   ) {
     await this.commentsService.updateComment(commentId, updateCommentDto);
-    return { statusCode: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.UPDATE };
+    return { status: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.UPDATE };
   }
 
   // 댓글 삭제
   @Delete(':commentId')
   async deleteComment(@Param('commentId') commentId: number) {
     await this.commentsService.deleteComment(commentId);
-    return { statusCode: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.DELETE };
+    return { status: HttpStatus.CREATED, message: COMMENTMESSAGE.SUCCESS.DELETE };
   }
 }

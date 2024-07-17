@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  BeforeInsert,
 } from 'typeorm';
 import { Checklist } from './checklist.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
@@ -42,11 +43,19 @@ export class Card {
   @Column({ type: 'json', nullable: true, name: 'assignee_id' })
   assigneeId: number;
 
-  @Column({ type: 'datetime', nullable: true })
-  startdate: Date;
+  @Column({
+    type: 'datetime',
+    name: 'start_date',
 
-  @Column({ type: 'datetime', nullable: true })
-  duedate: Date;
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  startDate: Date;
+
+  @Column({
+    type: 'datetime',
+    name: 'due_date',
+  })
+  dueDate: Date;
 
   @Column({ type: 'boolean', default: false })
   is_deleted: boolean;
@@ -74,4 +83,15 @@ export class Card {
 
   @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
   comments: Comment[];
+
+  @BeforeInsert()
+  setDefaultDates() {
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const tomorrow = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + oneDay);
+
+    if (!this.dueDate) {
+      this.dueDate = tomorrow;
+    }
+  }
 }
