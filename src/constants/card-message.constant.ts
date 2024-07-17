@@ -21,5 +21,6 @@ export const CARDMESSAGE = {
   SUCCESS: {
     UPDATE: '카드 수정에 성공했습니다.',
     DELETE: '카드 삭제에 성공했습니다.',
+    ASSIGN: '카드 작업자 할당에 성공했습니다.',
   },
 };
