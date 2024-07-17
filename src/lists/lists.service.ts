@@ -20,7 +20,10 @@ export class ListService {
     private readonly boardRepository: Repository<Board>,
   ) {}
 
-  async createList(createListDto: CreateListDto, userId: number): Promise<List> {
+  async createList(
+    createListDto: CreateListDto,
+    userId: number
+  ): Promise<any> {
     const { title, boardId } = createListDto;
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -34,28 +37,34 @@ export class ListService {
       throw new NotFoundException('보드를 찾을 수 없습니다.');
     }
 
-       // 모든 리스트를 가져옵니다.
+    // 모든 리스트를 가져옵니다.
     const lists = await this.listRepository.find({ order: { position: 'ASC' } });
 
     let newPosition: number;
     if (lists.length === 0) {
-         // 테이블에 행이 없는 경우
-    newPosition = 1024;
+      // 테이블에 행이 없는 경우
+      newPosition = 1024;
     } else {
-        // 테이블에 행이 하나 이상 있는 경우
-    const maxPosition = lists[lists.length - 1].position;
-    newPosition = maxPosition + 1024;
+      // 테이블에 행이 하나 이상 있는 경우
+      const maxPosition = lists[lists.length - 1].position;
+      newPosition = maxPosition + 1024;
     }
 
-    const list = this.listRepository.create({
+    const newList = this.listRepository.create({
       title,
       user,
       board,
       position: newPosition,
-
     });
 
-    return this.listRepository.save(list);
+    await this.listRepository.save(newList);
+
+    return {
+      id: newList.id,
+      title: newList.title,
+      created_At: newList.created_At,
+      updated_At: newList.updated_At,
+    };
   }
 
   async updateList(id: number, updateListDto: UpdateListDto): Promise<List> {
@@ -82,9 +91,27 @@ export class ListService {
     return { message: '삭제가 완료 되었습니다.'}
   }
 
+  async getLists(boardId: number): Promise<any[]> {
+    const lists = await this.listRepository.find({
+      where: { boardId },
+      relations: ['board', 'cards'],
+      order: { position: 'ASC' },
+    });
 
-  async getLists(): Promise<List[]> {
-    return this.listRepository.find({ relations: ['user', 'board', 'cards'],  order: { position: 'ASC' } });
+    return lists.map(list => ({
+      id: list.id,
+      title: list.title,
+      created_At: list.created_At,
+      updated_At: list.updated_At,
+      board: {
+        id: list.board.id,
+        title: list.board.title,
+      },
+      cards: list.cards.map(card => ({
+        id: card.id,
+        title: card.title,
+      })),
+    }));
   }
 
 
@@ -133,3 +160,4 @@ export class ListService {
     return list;
   }
 }
+
