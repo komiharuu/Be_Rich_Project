@@ -3,6 +3,7 @@ export const CARDMESSAGE = {
     NOTFOUND: {
       CARD_COMMENT: '해당 카드의 댓글을 찾을 수 없습니다.',
       CARD: '카드를 찾을 수 없습니다.',
+      USER: '할당자를 찾을 수 없습니다',
     },
     NAME: {
       REQUIRED: '이름을 입력해주세요.',
@@ -20,5 +21,6 @@ export const CARDMESSAGE = {
   SUCCESS: {
     UPDATE: '카드 수정에 성공했습니다.',
     DELETE: '카드 삭제에 성공했습니다.',
+    ASSIGN: '카드 작업자 할당에 성공했습니다.',
   },
 };

@@ -21,6 +21,7 @@ import { MoveCardDto } from './dto/move-card.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Card } from './entities/card.entity';
 import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
+import { AssignCardDto } from './dto/assign-card.dto';
 @UseGuards(AuthGuard('jwt'), BoardMemberGuard)
 @Controller('cards')
 export class CardsController {
@@ -44,7 +45,7 @@ export class CardsController {
   async updateCard(@Param('cardId') cardId: number, @Body() updateCardDto: UpdateCardDto) {
     await this.cardsService.updateCard(cardId, updateCardDto);
     return {
-      statusCode: HttpStatus.CREATED,
+      status: HttpStatus.CREATED,
       message: CARDMESSAGE.SUCCESS.UPDATE,
       cardId,
       ...updateCardDto,
@@ -58,21 +59,21 @@ export class CardsController {
   }
 
   // 카드 작업자 할당
-  // @Patch('/:cardId')
-  // async assignCard(@Param('cardId') cardId: number, @Body() updateCardDto: UpdateCardDto) {
-  //   await this.cardsService.updateCard(cardId, updateCardDto);
-  //   return {
-  //     statusCode: HttpStatus.CREATED,
-  //     message: CARDMESSAGE.SUCCESS.UPDATE,
-  //     cardId,
-  //     ...updateCardDto,
-  //   };
-  // }
+  @Patch('/:cardId/assign')
+  async assignCard(@Param('cardId') cardId: number, @Body() assignCardDto: AssignCardDto) {
+    await this.cardsService.assignCard(cardId, assignCardDto);
+    return {
+      status: HttpStatus.CREATED,
+      message: CARDMESSAGE.SUCCESS.ASSIGN,
+      cardId,
+      ...assignCardDto,
+    };
+  }
 
   // 카드 삭제
   @Delete('/:cardId')
   async deleteCard(@Param('cardId') cardId: number) {
     await this.cardsService.deleteCard(cardId);
-    return { statusCode: HttpStatus.CREATED, message: CARDMESSAGE.SUCCESS.DELETE };
+    return { status: HttpStatus.CREATED, message: CARDMESSAGE.SUCCESS.DELETE };
   }
 }
