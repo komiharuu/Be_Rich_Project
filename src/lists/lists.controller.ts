@@ -11,43 +11,29 @@ import { BoardMemberGuard } from 'src/boards/board-member.guard';
 @UseGuards(AuthGuard('jwt'))
 @Controller('lists')
 export class ListsController {
-  deleteList(req: { params: { listId: number; }; user: { id: number; }; }, listId: number) {
-    throw new Error('Method not implemented.');
-  }
-  updateList(req: { params: { listId: number; }; user: { id: number; }; }, listId: number, updateListDto: { title: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  createList(req: { user: { id: number; }; }, createListDto: { boardId: number; title: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  getLists(req: { user: { id: number; }; }, getListsDto: { board: number; }) {
-    throw new Error('Method not implemented.');
-  }
-
   constructor(private readonly listsService: ListService) {}
 
-
   @Post()
-  async create(@Body() createListDto: CreateListDto, @Req() req): Promise<List> {
+  async createList(@Body() createListDto: CreateListDto, @Req() req: any ): Promise<List> {
     const userId = req.user.userId;
-    return this.listsService.create(createListDto, userId);
+    return this.listsService.createList(createListDto, userId);
   }
 
 
   @Get()
-  async findAll(): Promise<List[]> {
-    return this.listsService.findAll();
+  async getLists(): Promise<List[]> {
+    return this.listsService.getLists();
   }
 
  
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
-    return this.listsService.update(id, updateListDto);
+  async updateList(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
+    return this.listsService.updateList(id, updateListDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise< {message:string} > {
-    return this.listsService.delete(id);
+  async deleteList(@Param('id') id: number): Promise< {message:string} > {
+    return this.listsService.deleteList(id);
   }
 
   @Patch(':id/move')
