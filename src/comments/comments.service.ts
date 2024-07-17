@@ -6,23 +6,31 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 import { User } from 'src/users/entities/user.entity';
+import { Card } from 'src/cards/entities/card.entity';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>
+    private commentRepository: Repository<Comment>,
+    @InjectRepository(Card)
+    private cardRepository: Repository<Card>
   ) {}
 
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto, user: User) {
     const { comment, cardId } = createCommentDto;
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!cardId) {
+      throw new Error(COMMENTMESSAGE.COMMON.NOTFOUND.CARD);
+    }
 
-    const newComment = await this.commentRepository.save({
+    const newComment = await this.commentRepository.create({
       comment,
       user: { id: user.id },
       card: { id: cardId },
     });
+    await this.commentRepository.save(newComment);
     return newComment;
   }
 
