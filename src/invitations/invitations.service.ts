@@ -188,7 +188,7 @@ export class InvitationsService {
     await this.invitationRepository.save(invitation);
 
     return {
-      status: HttpStatus.NO_CONTENT,
+      status: HttpStatus.OK,
       message: '성공적으로 초대를 거절하였습니다.',
     };
   }

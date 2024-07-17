@@ -51,7 +51,7 @@ export class InvitationsController {
    * 보드 초대 거절
    */
   @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @Get(':boardId/decline-invitation')
   declineInvitation(@Query('token') token: string, @Req() req: any) {
     const user: User = req.user;
