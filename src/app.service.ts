@@ -5,6 +5,6 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   constructor(private configService: ConfigService) {}
   getHello(): string {
-    return `${this.configService.get('SERVER_PORT')} 트렐로 오픈`;
+    return `${process.env.SERVER_PORT} 트렐로 오픈`;
   }
 }
