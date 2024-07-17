@@ -1,11 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class MoveCardDto {
-  prevElIndexNumber: number;
+  prePositionNumber: number;
 
-  nextElIndexNumber: number;
-  position: number;
-
-  // @IsNotEmpty({ message: '마감일을 입력해주세요.' })
-  // duedate: Date;
+  nextPositionNumber: number;
 }
