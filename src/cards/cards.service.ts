@@ -132,7 +132,6 @@ export class CardsService {
   }
 
   // 작업자 할당
-
   async assignCard(cardId: number, assignCardDto: AssignCardDto) {
     const { assignorId, assigneeId } = assignCardDto;
 
@@ -143,7 +142,7 @@ export class CardsService {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
 
-    // todo assignorId, assigneeId는 user정보에 있어야한다. 그래서 확인 절차에 들어갑니다
+    // assignorId, assigneeId는 user정보에 있어야하고, 확인 절차에 들어갑니다
     const assignor = await this.userRepository.findOne({ where: { id: assignorId } });
     const assignee = await this.userRepository.findOne({ where: { id: assigneeId } });
 
@@ -151,11 +150,10 @@ export class CardsService {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.USER);
     }
 
-    // 카드를 할당합니다.
-    const assignCard = await this.cardRepository.save({
-      assignorId,
-      assigneeId,
-    });
+    card.assignorId = assignorId;
+    card.assigneeId = assigneeId;
+
+    const assignCard = await this.cardRepository.save(card);
 
     return assignCard;
   }
