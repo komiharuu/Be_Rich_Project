@@ -22,7 +22,7 @@ export class Invitation {
   @JoinColumn({ name: 'board_id' })
   board: Board;
 
-  @Column({ unique: true })
+  @Column()
   memberEmail: string;
 
   @Column({ type: 'enum', enum: Status, default: Status.Pending })

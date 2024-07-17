@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -17,7 +18,7 @@ import { User } from 'src/users/entities/user.entity';
 import { InvitationsService } from './invitations.service';
 
 @ApiTags('보드')
-@Controller('invitations')
+@Controller('boards')
 export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
   /**
@@ -40,7 +41,7 @@ export class InvitationsController {
    */
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  @Post('accept-invitation')
+  @Get(':boardId/accept-invitation')
   acceptInvitation(@Query('token') token: string, @Req() req: any) {
     const user: User = req.user;
     return this.invitationsService.acceptInvitation(token, user);

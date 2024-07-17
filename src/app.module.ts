@@ -10,7 +10,7 @@ import { CommentsModule } from './comments/comments.module';
 import { configModuleValidationSchema } from './configs/env-validation.config';
 import { typeOrmModuleOptions } from './configs/database.config';
 import { EmailModule } from './boards/meilers/email.module';
-import { InvitationsModule } from './invites/invitations.module';
+import { InvitationsModule } from './invitations/invitaties.module';
 
 @Module({
   imports: [

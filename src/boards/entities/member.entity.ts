@@ -32,6 +32,9 @@ export class Member {
   @JoinColumn({ name: 'board_id' })
   board: Board;
 
+  @Column({ type: 'int', name: 'invitation_id', unsigned: true })
+  invitationId: number;
+
   @OneToOne(() => Invitation)
   @JoinColumn({ name: 'invitation_id' })
   invitation: Invitation;
