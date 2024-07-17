@@ -34,11 +34,14 @@ export class InvitationsService {
   }
 
   // 이미 보드 멤버인지 확인
-  private async isExistingMember(boardId: number, userId: number): Promise<boolean> {
+  private async isExistingMember(boardId: number, userId: number): Promise<Member> {
     const existingMember = await this.memberRepository.findOne({
       where: { board: { id: boardId }, user: { id: userId } },
     });
-    return !!existingMember;
+    if (existingMember) {
+      throw new ConflictException('해당 사용자는 이미 보드 멤버입니다.');
+    }
+    return existingMember;
   }
 
   //토큰 발급
@@ -54,11 +57,8 @@ export class InvitationsService {
 
   /* 보드 초대 */
   async createInvitation(id: number, inviteDto: { memberEmail: string }, user: User) {
+    //보드 존재 여부 확인
     const board = await this.findBoardById(id);
-
-    if (await this.isExistingMember(board.id, user.id)) {
-      throw new ConflictException('해당 사용자는 이미 보드 멤버입니다.');
-    }
 
     //사용자 정보 가져오기
     const invitedUser = await this.usersService.getUserByEmail(inviteDto.memberEmail);
@@ -66,6 +66,9 @@ export class InvitationsService {
     if (!invitedUser) {
       throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
+
+    //이미 멤버인지 확인
+    const existingMember = await this.isExistingMember(board.id, invitedUser.id);
 
     // 기존 초대 확인
     let invitation = await this.invitationRepository.findOne({
@@ -75,6 +78,11 @@ export class InvitationsService {
         status: Status.Pending,
       },
     });
+
+    // 기존 초대가 있고 상태가 Accepted인 경우
+    if (invitation && invitation.status === Status.Accepted) {
+      throw new ConflictException('이 사용자는 이미 초대를 수락했습니다.');
+    }
 
     // 초대가 없는 경우 새로운 초대 생성
     if (!invitation) {
@@ -109,6 +117,8 @@ export class InvitationsService {
             <p>${board.user.nickname}님께서 보낸 초대 이메일입니다.</p>
             <p>아래 링크를 클릭하여 보드에 가입하세요.</p>
             <a href="http://localhost:3000/accept-invitation?token=${invitation.token}">초대 수락하기</a>
+            <p>초대를 거절하시려면 아래 링크를 클릭하세요.</p>
+        <a href="http://localhost:3000/decline-invitation?token=${invitation.token}">초대 거절하기</a>
         </body>
         </html>
       `
@@ -119,7 +129,6 @@ export class InvitationsService {
       message: '성공적으로 초대 메일을 전송하였습니다.',
     };
   }
-
   /* 보드 초대 수락 */
   async acceptInvitation(token: string, user: User) {
     // 초대 토큰 확인
@@ -134,9 +143,8 @@ export class InvitationsService {
 
     const board = invitation.board;
 
-    if (await this.isExistingMember(board.id, user.id)) {
-      throw new ConflictException('해당 사용자는 이미 보드 멤버입니다.');
-    }
+    //이미 멤버인지 확인
+    const existingMember = await this.isExistingMember(board.id, user.id);
 
     // 사용자를 보드 멤버로 추가
     const newMember = this.memberRepository.create({
@@ -155,6 +163,33 @@ export class InvitationsService {
     return {
       status: HttpStatus.CREATED,
       message: '성공적으로 보드에 가입되었습니다.',
+    };
+  }
+
+  /* 보드 초대 거절 */
+  async declineInvitation(token: string, user: User) {
+    // 초대 토큰 확인
+    const invitation = await this.invitationRepository.findOne({
+      where: { token },
+      relations: ['board'],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('유효하지 않은 초대 토큰입니다.');
+    }
+
+    const board = invitation.board;
+
+    //이미 멤버인지 확인
+    const existingMember = await this.isExistingMember(board.id, user.id);
+
+    // 초대 정보 상태 업데이트
+    invitation.status = Status.Declined;
+    await this.invitationRepository.save(invitation);
+
+    return {
+      status: HttpStatus.OK,
+      message: '성공적으로 초대를 거절하였습니다.',
     };
   }
 }
