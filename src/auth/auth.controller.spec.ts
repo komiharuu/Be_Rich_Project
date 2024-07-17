@@ -22,6 +22,7 @@ const mockRepository = () => ({
 });
 
 // Auth sign-up DTO
+// 가짜 값 설정
 const signUpDto: any = AUTH_TEST_DUMMY[0];
 
 describe('AuthController', () => {
