@@ -6,6 +6,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { GetCommentListDto } from './dto/get-comment-list.dto';
 import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class CommentsService {
@@ -15,20 +16,15 @@ export class CommentsService {
   ) {}
 
   // 댓글 생성 api
-  async createComment(createCommentDto: CreateCommentDto) {
+  async createComment(createCommentDto: CreateCommentDto, user: User) {
     const { comment, card_id } = createCommentDto;
-    const newComment = this.commentRepository.save({ comment, card_id });
-    return newComment;
-  }
 
-  // 댓글 전체조회 api
-  async getCommentList(getCommentListDto: GetCommentListDto) {
-    const { cardId } = getCommentListDto;
-    const comments = await this.commentRepository.find({ where: { cardId } });
-    if (!comments) {
-      throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.CARD_COMMENT);
-    }
-    return comments;
+    const newComment = await this.commentRepository.save({
+      comment,
+      user: { id: user.id },
+      card: { id: card_id },
+    });
+    return newComment;
   }
 
   // 댓글 수정 api

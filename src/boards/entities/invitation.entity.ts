@@ -15,11 +15,14 @@ export class Invitation {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
+  @Column({ type: 'int', name: 'board_id', unsigned: true })
+  boardId: number;
+
   @ManyToOne(() => Board, (board) => board.invitations, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'board_id' })
   board: Board;
 
-  @Column({ unique: true })
+  @Column()
   memberEmail: string;
 
   @Column({ type: 'enum', enum: Status, default: Status.Pending })

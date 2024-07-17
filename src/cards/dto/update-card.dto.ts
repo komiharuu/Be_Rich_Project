@@ -21,11 +21,11 @@ export class UpdateCardDto extends PartialType(CreateCardDto) {
   color: string;
 
   @Type(() => Number)
-  assignment_id: number;
+  assignorId: number;
 
   @Type(() => Number)
   @IsNumber()
-  collaborator_id: number;
+  assigneeId: number;
 
   startdate: Date;
 

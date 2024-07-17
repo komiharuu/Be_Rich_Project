@@ -20,7 +20,7 @@ export class ListService {
     private readonly boardRepository: Repository<Board>,
   ) {}
 
-  async create(createListDto: CreateListDto, userId: number): Promise<List> {
+  async createList(createListDto: CreateListDto, userId: number): Promise<List> {
     const { title, boardId } = createListDto;
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -58,7 +58,7 @@ export class ListService {
     return this.listRepository.save(list);
   }
 
-  async update(id: number, updateListDto: UpdateListDto): Promise<List> {
+  async updateList(id: number, updateListDto: UpdateListDto): Promise<List> {
     const list = await this.listRepository.preload({
       id, ...updateListDto,
     });
@@ -70,7 +70,7 @@ export class ListService {
     return this.listRepository.save(list);
   }
 
-  async delete(id: number): Promise<{ message:string }> {
+  async deleteList(id: number): Promise<{ message:string }> {
     const list = await this.listRepository.findOne({ where: { id } });
 
     if (!list) {
@@ -83,7 +83,7 @@ export class ListService {
   }
 
 
-  async findAll(): Promise<List[]> {
+  async getLists(): Promise<List[]> {
     return this.listRepository.find({ relations: ['user', 'board', 'cards'],  order: { position: 'ASC' } });
   }
 
