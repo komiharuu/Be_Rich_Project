@@ -22,9 +22,10 @@ export class ListService {
 
   async createList(
     createListDto: CreateListDto,
+    boardId: number,
     userId: number
   ): Promise<any> {
-    const { title, boardId } = createListDto;
+    const { title } = createListDto;
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     const board = await this.boardRepository.findOne({ where: { id: boardId } });
@@ -38,7 +39,7 @@ export class ListService {
     }
 
     // 모든 리스트를 가져옵니다.
-    const lists = await this.listRepository.find({ order: { position: 'ASC' } });
+    const lists = await this.listRepository.find({ where: {boardId}, order: { position: 'ASC' } });
 
     let newPosition: number;
     if (lists.length === 0) {
@@ -101,6 +102,7 @@ export class ListService {
     return lists.map(list => ({
       id: list.id,
       title: list.title,
+      position:list.position,
       created_At: list.created_At,
       updated_At: list.updated_At,
       board: {
