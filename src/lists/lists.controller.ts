@@ -22,6 +22,7 @@ import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
 @UseGuards(AuthGuard('jwt'))
 @Controller('lists')
 export class ListsController {
+<<<<<<< HEAD
   deleteList(req: { params: { listId: number }; user: { id: number } }, listId: number) {
     throw new Error('Method not implemented.');
   }
@@ -39,27 +40,34 @@ export class ListsController {
     throw new Error('Method not implemented.');
   }
 
+=======
+>>>>>>> b6b5f30278a86476908734afbfb6e8685fccef98
   constructor(private readonly listsService: ListService) {}
 
   @Post()
-  async create(@Body() createListDto: CreateListDto, @Req() req): Promise<List> {
+  async createList(@Body() createListDto: CreateListDto, @Req() req: any ): Promise<List> {
     const userId = req.user.userId;
-    return this.listsService.create(createListDto, userId);
+    return this.listsService.createList(createListDto, userId);
   }
 
   @Get()
-  async findAll(): Promise<List[]> {
-    return this.listsService.findAll();
+  async getLists(): Promise<List[]> {
+    return this.listsService.getLists();
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
-    return this.listsService.update(id, updateListDto);
+  async updateList(@Param('id') id: number, @Body() updateListDto: UpdateListDto): Promise<List> {
+    return this.listsService.updateList(id, updateListDto);
   }
 
   @Delete(':id')
+<<<<<<< HEAD
   async remove(@Param('id') id: number): Promise<{ message: string }> {
     return this.listsService.delete(id);
+=======
+  async deleteList(@Param('id') id: number): Promise< {message:string} > {
+    return this.listsService.deleteList(id);
+>>>>>>> b6b5f30278a86476908734afbfb6e8685fccef98
   }
 
   @Patch(':id/move')
