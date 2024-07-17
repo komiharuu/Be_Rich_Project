@@ -15,17 +15,4 @@ export class CreateCardDto {
   @IsString()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.DESCRIPTION.REQUIRED })
   description: string;
-
-  // @Type(() => Number)
-  // @IsNumber()
-  // @IsNotEmpty({ message: '위치를 입력해주세요.' })
-  // position: number;
-
-  // @Type(() => Number)
-  // @IsNumber()
-  // @IsNotEmpty({ message: '할당자 id를 입력해주세요.' })
-  // assignment_id: number;
-
-  // @IsNotEmpty({ message: '마감일을 입력해주세요.' })
-  // duedate: Date;
 }
