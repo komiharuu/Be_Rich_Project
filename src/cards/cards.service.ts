@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { InjectRepository } from '@nestjs/typeorm';

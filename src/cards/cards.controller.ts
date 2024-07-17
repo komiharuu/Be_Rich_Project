@@ -8,9 +8,7 @@ import {
   Delete,
   HttpStatus,
   UseGuards,
-  Query,
   Req,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
