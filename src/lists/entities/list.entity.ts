@@ -30,13 +30,13 @@ export class List {
   position: number;
 
   @Column({ type: 'boolean', default: false })
-  is_deleted: boolean;
+  is_Deleted: boolean;
 
   @CreateDateColumn()
-  created_at: Date;
+  created_At: Date;
 
   @UpdateDateColumn()
-  updated_at: Date;
+  updated_At: Date;
 
   @OneToMany(() => Card, (card) => card.list)
   cards: Card[];

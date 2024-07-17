@@ -12,6 +12,7 @@ import {
   Delete,
   Req,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateListDto } from './dto/create-list.dto';
@@ -19,20 +20,20 @@ import { List } from './entities/list.entity';
 import { UpdateListPositionDto } from './dto/update-list.position.dto';
 import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), BoardMemberGuard)
 @Controller('lists')
 export class ListsController {
   constructor(private readonly listsService: ListService) {}
 
   @Post()
-  async createList(@Body() createListDto: CreateListDto, @Req() req: any): Promise<List> {
-    const userId = req.user.userId;
+  async createList(@Body() createListDto: CreateListDto, @Req() req: any ): Promise<any> {
+    const userId = req.user.id;
     return this.listsService.createList(createListDto, userId);
   }
 
-  @Get()
-  async getLists(): Promise<List[]> {
-    return this.listsService.getLists();
+  @Get(':boardId')
+  async getLists(@Param('boardId', ParseIntPipe) boardId: number): Promise<any[]> {
+    return this.listsService.getLists(boardId);
   }
 
   @Patch(':id')
@@ -41,7 +42,7 @@ export class ListsController {
   }
 
   @Delete(':id')
-  async deleteList(@Param('id') id: number): Promise<{ message: string }> {
+  async deleteList(@Param('id') id: number): Promise< {message:string} > {
     return this.listsService.deleteList(id);
   }
 
