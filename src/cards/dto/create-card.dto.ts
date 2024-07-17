@@ -6,7 +6,7 @@ export class CreateCardDto {
   @Type(() => Number)
   @IsNumber()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.LISTID.REQUIRED })
-  list_id: number;
+  listId: number;
 
   @IsString()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.NAME.REQUIRED })
@@ -15,8 +15,6 @@ export class CreateCardDto {
   @IsString()
   @IsNotEmpty({ message: CARDMESSAGE.COMMON.DESCRIPTION.REQUIRED })
   description: string;
-
-  position: number;
 
   // @Type(() => Number)
   // @IsNumber()

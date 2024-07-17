@@ -17,12 +17,12 @@ export class CommentsService {
 
   // 댓글 생성 api
   async createComment(createCommentDto: CreateCommentDto, user: User) {
-    const { comment, card_id } = createCommentDto;
+    const { comment, cardId } = createCommentDto;
 
     const newComment = await this.commentRepository.save({
       comment,
       user: { id: user.id },
-      card: { id: card_id },
+      card: { id: cardId },
     });
     return newComment;
   }

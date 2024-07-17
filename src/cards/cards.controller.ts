@@ -20,9 +20,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { MoveCardDto } from './dto/move-card.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Card } from './entities/card.entity';
-import { BoardMemberGuard } from 'src/boards/board-member.guard';
-
-@UseGuards(AuthGuard('jwt'))
+import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
+@UseGuards(AuthGuard('jwt'), BoardMemberGuard)
 @Controller('cards')
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
@@ -34,27 +33,13 @@ export class CardsController {
     return this.cardsService.createCard(createCardDto, user);
   }
 
-  // 카드 전체 조회
-  @Get()
-  async getCardList(): Promise<Card[]> {
-    return this.cardsService.getCardList();
-  }
-
   // 카드 상세조회
   @Get('/:cardId')
-  async getCardDetail(
-    @Param('cardId') cardId: number,
-    assignmentId: number,
-    collaboratorId: number
-  ) {
-    return this.cardsService.getCardDetail(cardId, assignmentId, collaboratorId);
+  async getCardDetail(@Param('cardId') cardId: number) {
+    return this.cardsService.getCardDetail(cardId);
   }
 
-  @Patch('/:cardId/move')
-  async moveCard(@Param('cardId') cardId: number, @Body() moveCardDto: MoveCardDto): Promise<Card> {
-    return this.cardsService.moveCard(moveCardDto, cardId);
-  }
-
+  // 카드 수정
   @Patch('/:cardId')
   async updateCard(@Param('cardId') cardId: number, @Body() updateCardDto: UpdateCardDto) {
     await this.cardsService.updateCard(cardId, updateCardDto);
@@ -66,6 +51,25 @@ export class CardsController {
     };
   }
 
+  // 카드 이동
+  @Patch('/:cardId/move')
+  async moveCard(@Param('cardId') cardId: number, @Body() moveCardDto: MoveCardDto): Promise<Card> {
+    return this.cardsService.moveCard(moveCardDto, cardId);
+  }
+
+  // 카드 작업자 할당
+  // @Patch('/:cardId')
+  // async assignCard(@Param('cardId') cardId: number, @Body() updateCardDto: UpdateCardDto) {
+  //   await this.cardsService.updateCard(cardId, updateCardDto);
+  //   return {
+  //     statusCode: HttpStatus.CREATED,
+  //     message: CARDMESSAGE.SUCCESS.UPDATE,
+  //     cardId,
+  //     ...updateCardDto,
+  //   };
+  // }
+
+  // 카드 삭제
   @Delete('/:cardId')
   async deleteCard(@Param('cardId') cardId: number) {
     await this.cardsService.deleteCard(cardId);
