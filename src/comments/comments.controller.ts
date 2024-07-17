@@ -17,8 +17,9 @@ import { GetCommentListDto } from './dto/get-comment-list.dto';
 import { COMMENTMESSAGE } from 'src/constants/comment-message.constant';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/users/entities/user.entity';
+import { BoardMemberGuard } from 'src/boards/guards/board-member.guard';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), BoardMemberGuard)
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}

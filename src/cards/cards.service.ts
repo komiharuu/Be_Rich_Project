@@ -17,7 +17,7 @@ export class CardsService {
 
   // 카드 생성
   async createCard(createCardDto: CreateCardDto, user: User) {
-    const { list_id, title, description, position } = createCardDto;
+    const { listId, title, description } = createCardDto;
     const cards = await this.cardRepository.find({ order: { position: 'ASC' } });
 
     let newPosition: number;
@@ -32,7 +32,7 @@ export class CardsService {
 
     const newCard = await this.cardRepository.save({
       user: { id: user.id },
-      list: { id: list_id },
+      list: { id: listId },
       title,
       position: newPosition,
       description,
@@ -41,27 +41,8 @@ export class CardsService {
     return newCard;
   }
 
-  // // 카드 리스트 조회
-  async getCardList(): Promise<any[]> {
-    const cards = await this.cardRepository.find({
-      order: { position: 'ASC' },
-    });
-
-    // 각 카드에 추가 정보 할당
-    const updatedCards = cards.map((card) => ({
-      cardId: card.id,
-      listId: card.listId,
-      title: card.title,
-      position: card.position,
-      createdAt: card.created_at,
-      updatedAt: card.updated_at,
-    }));
-
-    return updatedCards;
-  }
-
   // 카드 상세조회 - 상세조회한 카드에 댓글도 같이 보이게 함
-  async getCardDetail(cardId: number, assignmentId: number, collaboratorId: number) {
+  async getCardDetail(cardId: number) {
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
       relations: ['comments'],
@@ -74,7 +55,7 @@ export class CardsService {
 
   // 카드 수정
   async updateCard(cardId: number, updateCardDto: UpdateCardDto) {
-    const { name, description, color, assignorId, assigneeId } = updateCardDto;
+    const { name, description, color } = updateCardDto;
 
     // 수정할 카드 아이디를 찾습니다.
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
@@ -89,8 +70,6 @@ export class CardsService {
       name,
       description,
       color,
-      assignorId,
-      assigneeId,
     });
 
     return updateCard;
@@ -112,7 +91,7 @@ export class CardsService {
     let newPosition: number;
 
     // changePositionNumber가 1일 경우, 첫 번째 카드의 위치를 절반으로 나눈 값으로 newPosition을 설정합니다.
-    console.log(prePositionNumber, nextPositionNumber);
+
     if (prePositionNumber === undefined) {
       newPosition = nextPositionNumber - 512;
       // 드래그된 요소가 가장 상단에 있는 경우
@@ -138,7 +117,7 @@ export class CardsService {
       const cards = await this.cardRepository.find({
         order: { position: 'ASC' },
       });
-      console.log(2);
+
       // 모든 카드들에 대해 순차적으로 위치를 재설정합니다.
       for (let i = 0; i < cards.length; i++) {
         cards[i].position = (i + 1) * 1024;
@@ -150,4 +129,27 @@ export class CardsService {
   }
 
   // 작업자 할당
+
+  // async assignCard(cardId: number, updateCardDto: UpdateCardDto) {
+  //   const { name, description, color, assignorId, assigneeId } = updateCardDto;
+
+  //   // 수정할 카드 아이디를 찾습니다.
+  //   const card = await this.cardRepository.findOne({ where: { id: cardId } });
+
+  //   if (!card) {
+  //     throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
+  //   }
+
+  //   // 댓글을 수정합니다.
+  //   const assignCard = await this.cardRepository.save({
+  //     id: cardId,
+  //     name,
+  //     description,
+  //     color,
+  //     assignorId,
+  //     assigneeId,
+  //   });
+
+  //   return assignCard;
+  // }
 }
