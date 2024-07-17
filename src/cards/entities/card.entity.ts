@@ -9,7 +9,7 @@ import {
   JoinColumn,
   BeforeInsert,
 } from 'typeorm';
-import { Checklist } from './checklist.entity';
+
 import { Comment } from 'src/comments/entities/comment.entity';
 import { List } from 'src/lists/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -77,9 +77,6 @@ export class Card {
   })
   @JoinColumn({ name: 'list_id' })
   list: List;
-
-  @OneToMany(() => Checklist, (checklists) => checklists.card, {})
-  checklists: Checklist[];
 
   @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
   comments: Comment[];
