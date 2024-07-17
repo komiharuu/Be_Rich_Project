@@ -111,20 +111,10 @@ describe('CardsController', () => {
         title: 'Test Title',
         description: 'Test Description',
         color: '#FFFFFF',
+        assignorId: 1, // 할당한 사람 ID
+        assigneeId: 2, // 할당된 사람 ID
         createdAt: '2024-07-05T23:08:07.001Z',
         updatedAt: '2024-07-05T23:08:07.001Z',
-        assign: [
-          {
-            cardId: 1,
-            assignorId: 1, // 할당한 사람 ID
-            assigneeId: 2, // 할당된 사람 ID
-          },
-          {
-            cardId: 1,
-            assignorId: 1, // 할당한 사람 ID
-            assigneeId: 3, // 할당된 사람 ID
-          },
-        ],
       };
       const req = { params: { cardId: 1 }, user: { id: 1 } };
 
@@ -155,10 +145,7 @@ describe('CardsController', () => {
       // THEN
       expect(mockCardsService.updateCard).toHaveBeenCalledTimes(1);
       expect(response).toEqual(updateCardResult);
-      expect(mockCardsService.updateCard).toHaveBeenCalledWith(
-        req.params.cardId,
-        updateCardDto
-      );
+      expect(mockCardsService.updateCard).toHaveBeenCalledWith(req.params.cardId, updateCardDto);
     });
 
     it('should delete card', async () => {
