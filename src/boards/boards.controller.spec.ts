@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { CreateInvitationDto } from '../invitations/dto/create-invitation.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
@@ -14,8 +13,6 @@ const mockBoardsService = {
   getBoardDetail: jest.fn(),
   updateBoard: jest.fn(),
   deleteBoard: jest.fn(),
-  createInvitation: jest.fn(),
-  acceptInvitation: jest.fn(),
 };
 
 // BoardRepository Mocking
@@ -34,16 +31,6 @@ const updateBoardDto: UpdateBoardDto = {
   title: 'Test',
   description: 'Test ...',
   backgroundColor: '#FFFFFF',
-};
-
-// Create Invitation DTO
-const createInvitationDto: CreateInvitationDto = {
-  memberEmail: 'test@test.com',
-};
-
-// Accept Invitation DTO
-const acceptInvitationDto = {
-  token: 'ask6dj2fnl12iud3rn',
 };
 
 describe('BoardsController', () => {
@@ -251,65 +238,4 @@ describe('BoardsController', () => {
       expect(mockBoardsService.deleteBoard).toHaveBeenCalledWith(req.params.boardId, req.user);
     });
   });
-
-  // describe('createInvitation', () => {
-  //   it('should create invitation', async () => {
-  //     // GIVEN
-  //     const createInvitationResult = {
-  //       email: 'test@test.com',
-  //       token: 'ask6dj2fnl12iud3rn',
-  //     };
-  //     const req = { user: { id: 1 } };
-
-  //     // 모킹된 서비스의 createInvitation 메서드를 실행하면 createInvitationResult 값을 반환한다는 의미
-  //     mockBoardsService.createInvitation.mockResolvedValue(createInvitationResult);
-
-  //     // WHEN
-  //     const response = await controller.createInvitation(req, createInvitationDto);
-
-  //     // THEN
-  //     // 테스트 진행하는 부분
-  //     // 컨트롤러 메서드가 1번 실행되었는지 확인
-  //     expect(mockBoardsService.createInvitation).toHaveBeenCalledTimes(1);
-  //     // 컨트롤러의 실제 createInvitation 메서드의 결과에 token이 있는지 확인
-  //     expect(response).toHaveProperty('token');
-  //     // 컨트롤러의 실제 createInvitation 메서드의 token이 문자열인지 확인
-  //     expect(typeof response.token).toBe('string');
-  //     // 컨트롤러의 실제 createInvitation 메서드의 결과가 createInvitationResult 같은지 확인
-  //     expect(response).toEqual(createInvitationResult);
-  //     // 컨트롤러에서 서비스의 createInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-  //     expect(mockBoardsService.createInvitation).toHaveBeenCalledWith(
-  //       req.user.id, // 사용자가 보드의 owner인지 확인하기 위한 용도
-  //       createInvitationDto
-  //     );
-  //   });
-  // });
-
-  // describe('acceptInvitation', () => {
-  //   it('should accept invitation', async () => {
-  //     // GIVEN
-  //     const acceptInvitationResult = {
-  //       status: 201,
-  //       message: '성공적으로 보드에 가입되었습니다.',
-  //     };
-  //     const req = { user: { id: 1 } };
-
-  //     // 모킹된 서비스의 acceptInvitation 메서드를 실행하면 acceptInvitationResult 값을 반환한다는 의미
-  //     mockBoardsService.acceptInvitation.mockResolvedValue(acceptInvitationResult);
-
-  //     // WHEN
-  //     const response = await controller.acceptInvitation(req, acceptInvitationDto);
-
-  //     // THEN
-  //     // 컨트롤러 메서드가 1번 실행되었는지 확인
-  //     expect(mockBoardsService.acceptInvitation).toHaveBeenCalledTimes(1);
-  //     // 컨트롤러의 실제 acceptInvitation 메서드의 결과가 acceptInvitationResult 같은지 확인
-  //     expect(response).toEqual(acceptInvitationResult);
-  //     // 컨트롤러에서 서비스의 acceptInvitation 메서드를 사용할 때 다음과 같은 매개변수를 사용하는지 확인
-  //     expect(mockBoardsService.acceptInvitation).toHaveBeenCalledWith(
-  //       req.user.id, // 수락하는 사용자가 초대 받은 사용자가 맞는지 확인하는 용도
-  //       acceptInvitationDto
-  //     );
-  //   });
-  // });
 });
