@@ -55,6 +55,9 @@ jobs:
             echo "DB_SYNC=${{ secrets.DB_SYNC }}" >> .env
             echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
             echo "REFRESH_SECRET_KEY=${{ secrets.REFRESH_SECRET_KEY }}" >> .env
+            echo "GMAIL_CLIENT_ID=${{ secrets.GMAIL_CLIENT_ID }}" >> .env
+            echo "GMAIL_CLIENT_SECRET=${{ secrets.GMAIL_CLIENT_SECRET }}" >> .env
+            echo "GMAIL_ID=${{ secrets.GMAIL_ID }}" >> .env
 
 
             # 의존성 설치
