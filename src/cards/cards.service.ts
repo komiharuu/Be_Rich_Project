@@ -97,7 +97,10 @@ export class CardsService {
     if (!card) {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
-    await this.cardRepository.delete(cardId);
+
+    card.isDeleted = true;
+
+    await this.cardRepository.save(card);
   }
 
   // 끝의부분 수정 및 포지션 변경안됨 - id를 통한 이동
