@@ -7,7 +7,6 @@ import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { UsersService } from 'src/users/users.service';
 import { Board } from './entities/board.entity';
 import { User } from 'src/users/entities/user.entity';
-import { title } from 'process';
 
 @Injectable()
 export class BoardsService {

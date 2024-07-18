@@ -3,6 +3,7 @@ export const COMMENTMESSAGE = {
     NOTFOUND: {
       CARD_COMMENT: '해당 카드의 댓글을 찾을 수 없습니다.',
       COMMENT: '댓글을 찾을 수 없습니다.',
+      CARD: '카드를 찾을 수 없습니다',
     },
     COMMENT: {
       REQUIRED: '댓글 내용을 입력해주세요.',

@@ -13,7 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { BoardOwnerGuard } from 'src/boards/guards/board-owner.guard';
-import { CreateInvitationDto } from 'src/boards/dto/create-invitation.dto';
+import { CreateInvitationDto } from 'src/invitations/dto/create-invitation.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InvitationsService } from './invitations.service';
 
@@ -25,7 +25,7 @@ export class InvitationsController {
    * 보드 초대
    */
   @UseGuards(AuthGuard('jwt'), BoardOwnerGuard)
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post(':boardId/invite')
   createInvitation(
     @Param('boardId') id: number,
@@ -45,5 +45,16 @@ export class InvitationsController {
   acceptInvitation(@Query('token') token: string, @Req() req: any) {
     const user: User = req.user;
     return this.invitationsService.acceptInvitation(token, user);
+  }
+
+  /**
+   * 보드 초대 거절
+   */
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  @Get(':boardId/decline-invitation')
+  declineInvitation(@Query('token') token: string, @Req() req: any) {
+    const user: User = req.user;
+    return this.invitationsService.declineInvitation(token, user);
   }
 }

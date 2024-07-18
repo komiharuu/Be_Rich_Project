@@ -7,8 +7,9 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  BeforeInsert,
 } from 'typeorm';
-import { Checklist } from './checklist.entity';
+
 import { Comment } from 'src/comments/entities/comment.entity';
 import { List } from 'src/lists/entities/list.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -42,20 +43,28 @@ export class Card {
   @Column({ type: 'json', nullable: true, name: 'assignee_id' })
   assigneeId: number;
 
-  @Column({ type: 'datetime', nullable: true })
-  startdate: Date;
+  @Column({
+    type: 'datetime',
+    name: 'start_date',
 
-  @Column({ type: 'datetime', nullable: true })
-  duedate: Date;
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  startDate: Date;
 
-  @Column({ type: 'boolean', default: false })
-  is_deleted: boolean;
+  @Column({
+    type: 'datetime',
+    name: 'due_date',
+  })
+  dueDate: Date;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ type: 'boolean', default: false, name: 'is_deleted' })
+  isDeleted: boolean;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.cards, {
     onDelete: 'CASCADE',
@@ -69,9 +78,17 @@ export class Card {
   @JoinColumn({ name: 'list_id' })
   list: List;
 
-  @OneToMany(() => Checklist, (checklists) => checklists.card, {})
-  checklists: Checklist[];
-
   @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
   comments: Comment[];
+
+  @BeforeInsert()
+  setDefaultDates() {
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const tomorrow = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + oneDay);
+
+    if (!this.dueDate) {
+      this.dueDate = tomorrow;
+    }
+  }
 }

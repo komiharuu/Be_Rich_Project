@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,18 +7,30 @@ import { Card } from './entities/card.entity';
 import { User } from 'src/users/entities/user.entity';
 import { CARDMESSAGE } from 'src/constants/card-message.constant';
 import { MoveCardDto } from './dto/move-card.dto';
+import { AssignCardDto } from './dto/assign-card.dto';
+import { List } from 'src/lists/entities/list.entity';
 
 @Injectable()
 export class CardsService {
   constructor(
     @InjectRepository(Card)
-    private cardRepository: Repository<Card>
+    private cardRepository: Repository<Card>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(List)
+    private listRepository: Repository<List>
   ) {}
 
   // 카드 생성
   async createCard(createCardDto: CreateCardDto, user: User) {
     const { listId, title, description } = createCardDto;
     const cards = await this.cardRepository.find({ order: { position: 'ASC' } });
+
+    // 리스트를 조회합니다.
+    const list = await this.listRepository.findOne({ where: { id: listId } });
+    if (!list) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.LIST);
+    }
 
     let newPosition: number;
 
@@ -30,13 +42,15 @@ export class CardsService {
       newPosition = maxPosition + 1024;
     }
 
-    const newCard = await this.cardRepository.save({
+    const newCard = this.cardRepository.create({
       user: { id: user.id },
       list: { id: listId },
       title,
       position: newPosition,
       description,
     });
+
+    await this.cardRepository.save(newCard);
 
     return newCard;
   }
@@ -55,7 +69,7 @@ export class CardsService {
 
   // 카드 수정
   async updateCard(cardId: number, updateCardDto: UpdateCardDto) {
-    const { name, description, color } = updateCardDto;
+    const { title, description, color, startDate, dueDate } = updateCardDto;
 
     // 수정할 카드 아이디를 찾습니다.
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
@@ -64,12 +78,14 @@ export class CardsService {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
 
-    // 댓글을 수정합니다.
+    // 카드를 수정합니다.
     const updateCard = await this.cardRepository.save({
       id: cardId,
-      name,
+      title,
       description,
       color,
+      startDate,
+      dueDate,
     });
 
     return updateCard;
@@ -81,7 +97,10 @@ export class CardsService {
     if (!card) {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
-    await this.cardRepository.delete(cardId);
+
+    card.isDeleted = true;
+
+    await this.cardRepository.save(card);
   }
 
   // 끝의부분 수정 및 포지션 변경안됨 - id를 통한 이동
@@ -129,27 +148,33 @@ export class CardsService {
   }
 
   // 작업자 할당
+  async assignCard(cardId: number, assignCardDto: AssignCardDto) {
+    const { assignorId, assigneeId } = assignCardDto;
 
-  // async assignCard(cardId: number, updateCardDto: UpdateCardDto) {
-  //   const { name, description, color, assignorId, assigneeId } = updateCardDto;
+    // 수정할 카드 아이디를 찾습니다.
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
 
-  //   // 수정할 카드 아이디를 찾습니다.
-  //   const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!card) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
+    }
 
-  //   if (!card) {
-  //     throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
-  //   }
+    // assignorId, assigneeId는 user정보에 있어야하고, 확인 절차에 들어갑니다
+    const assignor = await this.userRepository.findOne({ where: { id: assignorId } });
+    const assignee = await this.userRepository.findOne({ where: { id: assigneeId } });
 
-  //   // 댓글을 수정합니다.
-  //   const assignCard = await this.cardRepository.save({
-  //     id: cardId,
-  //     name,
-  //     description,
-  //     color,
-  //     assignorId,
-  //     assigneeId,
-  //   });
+    if (!assignor || !assignee) {
+      throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.USER);
+    }
 
-  //   return assignCard;
-  // }
+    card.assignorId = assignorId;
+    card.assigneeId = assigneeId;
+
+    const assignCard = await this.cardRepository.save(card);
+
+    return {
+      assignorId: card.assignorId,
+      assigneeId: card.assigneeId,
+      cardId: card.id,
+    };
+  }
 }
