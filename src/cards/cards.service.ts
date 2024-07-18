@@ -78,7 +78,7 @@ export class CardsService {
       throw new NotFoundException(CARDMESSAGE.COMMON.NOTFOUND.CARD);
     }
 
-    // 댓글을 수정합니다.
+    // 카드를 수정합니다.
     const updateCard = await this.cardRepository.save({
       id: cardId,
       title,
