@@ -99,6 +99,10 @@ export class ListService {
       order: { position: 'ASC' },
     });
 
+    lists.forEach(list => {
+      list.cards.sort((a, b) => a.position - b.position);
+    });
+
     return lists.map(list => ({
       id: list.id,
       title: list.title,
@@ -112,6 +116,7 @@ export class ListService {
       cards: list.cards.map(card => ({
         id: card.id,
         title: card.title,
+        position: card.position,
       })),
     }));
   }
