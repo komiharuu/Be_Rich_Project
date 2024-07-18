@@ -57,14 +57,14 @@ export class Card {
   })
   dueDate: Date;
 
-  @Column({ type: 'boolean', default: false })
-  is_deleted: boolean;
+  @Column({ type: 'boolean', default: false, name: 'is_deleted' })
+  isDeleted: boolean;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.cards, {
     onDelete: 'CASCADE',
