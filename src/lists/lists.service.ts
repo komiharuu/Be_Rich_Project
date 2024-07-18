@@ -87,7 +87,9 @@ export class ListService {
       throw new NotFoundException('리스트를 찾을 수 없습니다');
     }
 
-    await this.listRepository.remove(list);
+    list.is_Deleted = true;
+  
+    await this.listRepository.save(list);
 
     return { message: '삭제가 완료 되었습니다.'}
   }
