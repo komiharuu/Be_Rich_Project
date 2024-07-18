@@ -29,7 +29,7 @@ export class List {
   @Column({ type: 'int', nullable: false })
   position: number;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({default: false })
   is_Deleted: boolean;
 
   @CreateDateColumn()
