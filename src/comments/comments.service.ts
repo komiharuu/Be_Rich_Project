@@ -59,7 +59,8 @@ export class CommentsService {
       throw new NotFoundException(COMMENTMESSAGE.COMMON.NOTFOUND.COMMENT);
     }
 
-    // 댓글을 삭제합니다
-    await this.commentRepository.delete(commentId);
+    comment.isDeleted = true;
+
+    await this.commentRepository.save(comment);
   }
 }
